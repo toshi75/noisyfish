@@ -4,10 +4,22 @@ function fish_prompt --description 'Prompt:noisyfish'
     echo '------------------------------------------'
 
   # Line 2
+    set -l USE JP  # JP or not.
+    set_color bryellow ;echo -n 'fish'
     set_color brred    ;echo -n "["
     set_color brcyan   ;echo -n (date '+%m')
     set_color bryellow ;echo -n '/'
     set_color brcyan   ;echo -n (date +%d)
+    if [ "$USE" = "JP" ]
+                        echo -n (date '+%u' |
+                                 sed -e 's|1|㈪|g' \
+                                     -e 's|2|㈫|g' \
+                                     -e 's|3|㈬|g' \
+                                     -e 's|4|㈭|g' \
+                                     -e 's|5|㈮|g' \
+                                     -e 's|6|㈯|g' \
+                                     -e 's|7|㈰|g')
+    else
                         echo -n ' '
                         echo -n (date '+%u' |
                                  sed -e 's|1|Mon|g' \
@@ -17,7 +29,8 @@ function fish_prompt --description 'Prompt:noisyfish'
                                      -e 's|5|Fri|g' \
                                      -e 's|6|Sat|g' \
                                      -e 's|7|Sun|g')
-                        echo -n ' '
+    end
+                                     echo -n ' '
                         echo -n (date +%H)
     set_color bryellow ;echo -n ':'
     set_color brcyan   ;echo -n (date +%M)

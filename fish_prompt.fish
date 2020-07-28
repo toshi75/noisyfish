@@ -1,5 +1,8 @@
 function fish_prompt --description 'Prompt:noisyfish'
   # toshi75   https://github.com/toshi75/noisyfish
+  
+  # fisher add jethrokuan/z edc/bass jethrokuan/fzf laughedelic/fish_logo #ryotako/fish-vimcolor
+    
   # Line 1
     echo '------------------------------------------'
 

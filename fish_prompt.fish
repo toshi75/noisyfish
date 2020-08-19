@@ -45,7 +45,7 @@ function fish_prompt --description 'Prompt:noisyfish'
                                  awk '{print $4}' 2>/dev/null)
     set_color ff9900    ;echo -n ']'
     set fish_prompt_pwd_dir_length 0
-    set_color 000000 ;echo    ': '(pwd |
+    set_color ffff00 ;echo    ': '(pwd |
                                      sed -e "s|\/home\/$USER|\$HOME|g" \
                                          -e 's|\/\/|\/|g' \
                                          -e 's|\/$||g')

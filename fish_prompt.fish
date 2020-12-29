@@ -4,11 +4,18 @@ function fish_prompt --description 'Prompt:noisyfish'
   # fisher add jethrokuan/z edc/bass jethrokuan/fzf laughedelic/fish_logo #ryotako/fish-vimcolor
 
   # Line 1
-    echo '------------------------------------------'
+    set N 1
+        echo -n '--- fish '
+    set WIDTH (math (tput cols)-1-9)
+    while [ $N -le $WIDTH ]
+        echo -n '-'
+        set N (math $N+1)
+    end
+        echo    '-'
 
   # Line 2
     set -l USE JP  # JP or not.
-    set_color ffff00 ;echo -n 'fish'
+  # set_color ffff00 ;echo -n 'fish'
     set_color ff0000 ;echo -n "["
     set_color 00ffff ;echo -n (date '+%m')
     set_color ffff00 ;echo -n '/'

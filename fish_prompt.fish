@@ -21,7 +21,7 @@ function fish_prompt --description 'Prompt:noisyfish'
     set_color ff0000 ;echo -n "["
     set_color 00ffff ;echo -n (date '+%m')
     set_color ffff00 ;echo -n '/'
-    set_color 00ffff ;echo -n (date +%d)
+    set_color 00ffff ;echo -n (date '+%d')
     switch (date '+%u')
         case 5
             set_color ffdd00

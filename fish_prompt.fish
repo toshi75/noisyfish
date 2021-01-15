@@ -4,44 +4,42 @@ function fish_prompt --description 'Prompt:noisyfish'
   # fisher add jethrokuan/z edc/bass jethrokuan/fzf laughedelic/fish_logo #ryotako/fish-vimcolor
 
   # Line 1
-    set N 1
-        echo -n '--- fish '
-    set WIDTH (math (tput cols)-1-9)
-    while [ $N -le $WIDTH ]
-        echo -n '-'
+    set -l HEAD '=== fish '
+    set -l TAIL '='
+    #######################
+    set -l N 1
+    set -l WIDTH (math (tput cols)-(echo -n $HEAD |wc -m))
+    echo -n "$HEAD"
+    while [ $N -lt $WIDTH ]
+        echo -n $TAIL
         set N (math $N+1)
     end
-        echo    '-'
+        echo    $TAIL
 
   # Line 2
-    set -l USE JP  # JP or not.
-  # set_color ffff00 ;echo -n 'fish'
+    set -l USE MYLOCALE # MYLOCALE or not.
     set_color ff0000 ;echo -n "["
     set_color 00ffff ;echo -n (date '+%m')
     set_color ffff00 ;echo -n '/'
     set_color 00ffff ;echo -n (date +%d)
-    if [ "$USE" = "JP" ]
-                        echo -n (date '+%u' |
-                                 sed -e 's|1|㈪|g' \
-                                     -e 's|2|㈫|g' \
-                                     -e 's|3|㈬|g' \
-                                     -e 's|4|㈭|g' \
-                                     -e 's|5|㈮|g' \
-                                     -e 's|6|㈯|g' \
-                                     -e 's|7|㈰|g')
-    else
-                        echo -n ' '
-                        echo -n (date '+%u' |
-                                 sed -e 's|1|Mon|g' \
-                                     -e 's|2|Tue|g' \
-                                     -e 's|3|Wed|g' \
-                                     -e 's|4|Thu|g' \
-                                     -e 's|5|Fri|g' \
-                                     -e 's|6|Sat|g' \
-                                     -e 's|7|Sun|g')
+    switch (date '+%u')
+        case 5
+            set_color ffdd00
+        case 7
+            set_color ff0000
+        case '*'
+            set_color 00ffff
     end
-                                     echo -n ' '
-                        echo -n (date +%H)
+    if [ "$USE" = "MYLOCALE" ]
+                      echo -n (date '+%a')
+    else
+                      set -l TEMP "$LANG"
+                      set -l LANG C
+                      echo -n (date '+%a')
+                      set -l LANG "$TEMP"
+    end
+                      echo -n ' '
+    set_color 00ffff ;echo -n (date +%H)
     set_color ffff00 ;echo -n ':'
     set_color 00ffff ;echo -n (date +%M)
     set_color ff0000 ;echo -n ']['

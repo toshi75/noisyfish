@@ -1,7 +1,8 @@
 function fish_prompt --description 'Prompt:noisyfish'
   # toshi75   https://github.com/toshi75/noisyfish
 
-  # fisher add jethrokuan/z edc/bass jethrokuan/fzf laughedelic/fish_logo #ryotako/fish-vimcolor
+  # fisher add jethrokuan/z edc/bass jethrokuan/fzf laughedelic/fish_logo patrickf1/colored_man_pages.fish
+  # ryotako/fish-vimcolor
 
   # Line 1
     set -l HEAD '=== fish '
@@ -10,11 +11,13 @@ function fish_prompt --description 'Prompt:noisyfish'
     set -l N 1
     set -l WIDTH (math (tput cols)-(echo -n $HEAD |wc -m))
     echo -n "$HEAD"
-    while [ $N -lt $WIDTH ]
+    #while [ $N -lt $WIDTH ]
+    while [ $N -le $WIDTH ]
         echo -n $TAIL
         set N (math $N+1)
     end
-        echo    $TAIL
+    printf '\s'
+    #echo    $TAIL
 
   # Line 2
     set -l USE MYLOCALE # MYLOCALE or not.

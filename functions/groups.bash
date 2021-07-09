@@ -2,6 +2,8 @@
 
 sudo groupadd vboxusers
 sudo groupadd vboxsf
+sudo gpasswd -a $USER vboxusers
+sudo gpasswd -a $USER vboxsf
 sudo gpasswd -a $USER wheel
 sudo gpasswd -a $USER disk
 sudo gpasswd -a $USER storage

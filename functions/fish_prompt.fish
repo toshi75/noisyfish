@@ -53,10 +53,17 @@ function fish_prompt --description 'Write out the prompt'
                                  awk '{print $4}' 2>/dev/null)
     set_color ff0000    ;echo -n ']'
     set fish_prompt_pwd_dir_length 0
-    set_color ffff00 ;echo    ': '(pwd |
-                                     sed -e "s|\/home\/$USER|\$HOME|g" \
-                                         -e 's|\/\/|\/|g' \
-                                         -e 's|\/$||g')
+    if [ (fc-list |grep -ci emoji) -gt 0 ]
+        set_color ffff00 ;echo    ': '(pwd |
+                                         sed -e "s|\/home\/$USER|🏠️|g" \
+                                             -e 's|\/\/|\/|g' \
+                                             -e 's|\/$||g')
+    else
+        set_color ffff00 ;echo    ': '(pwd |
+                                         sed -e "s|\/home\/$USER|\$HOME|g" \
+                                             -e 's|\/\/|\/|g' \
+                                             -e 's|\/$||g')
+    end
   # Line 3
     set_color ffff00 ;echo -n '>'
     set_color ff0000 ;echo -n '+'

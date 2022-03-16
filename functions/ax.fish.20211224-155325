@@ -1,0 +1,26 @@
+function ax
+    cd $PWD
+    switch (count $argv)
+        case 0
+            axel (xsel -bo)
+        case 1
+            if [ (echo $argv[1] |grep -c ^http) -eq 0 ]
+                axel -o {$argv[1]}-axel-working.mp4 (xsel -bo) &&
+                ffmpeg -hide_banner -threads auto \
+                       -i ./{$argv[1]}-axel-working.mp4 \
+                       -c copy -movflags faststart ./"{$argv[1]}.mp4" ||
+                ffmpeg -hide_banner -threads auto -y -safe 0 \
+                       -i ./{$argv[1]}-axel-working.mp4 \
+                       -c copy -movflags faststart ./"{$argv[1]}.mp4"
+                if [ (status -f) -eq 0 ]
+                    /usr/bin/rm ./{$argv[1]}-axel-working.mp4
+                end
+            else
+                axel $argv[1]
+            end
+        case '*'
+            echo "Too many input."
+            return 99
+    end
+    return 0
+end

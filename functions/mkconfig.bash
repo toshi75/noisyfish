@@ -12,6 +12,20 @@ XDG_VIDEOS_DIR="$HOME/Autosave"
 
 __DIR__
 
+cat <<- '__UPDTEDB__' >/tmp/updatedb.conf
+PRUNE_BIND_MOUNTS = "yes"
+PRUNEFS = "tmpfs vboxsf davfs"
+PRUNENAMES = ".git .hg .svn"
+PRUNEPATHS = "/home/toshi75/ex11/uraaka /home/toshi75/twi /home/toshi75/hd41/twi /home/toshi75/hd41/twitemp /afs /tmp /var/cache /var/db /var/dev  /var/dpkg /var/empty /var/games /var/lib /var/local /var/lock /var/log /var/mail /var/opt /var/run /var/spool /var/tmp /var/vagrant.d"
+
+#PRUNE_BIND_MOUNTS = "yes"
+#PRUNEFS = "9p afs anon_inodefs auto autofs bdev binfmt_misc cgroup cifs coda configfs cpuset cramfs debugfs devpts devtmpfs ecryptfs exofs ftpfs fuse fuse.encfs fuse.sshfs fusectl gfs gfs2 hugetlbfs inotifyfs iso9660 jffs2 lustre mqueue ncpfs nfs nfs4 nfsd pipefs proc ramfs rootfs rpc_pipefs securityfs selinuxfs sfs shfs smbfs sockfs sshfs sysfs tmpfs ubifs udf usbfs vboxsf"
+#PRUNENAMES = ".git .hg .svn"
+#PRUNEPATHS = "/afs /media /mnt /net /sfs /tmp /udev /var/cache /var/db /var/dev  /var/dpkg /var/empty /var/games /var/lib /var/local /var/lock /var/log /var/mail /var/opt /var/run /var/spool /var/tmp /var/vagrant.d"
+
+__UPDTEDB__
+sudo mv /tmp/updatedb.conf /etc
+
 mkdir -p "$HOME/.config/yay"
 cat <<- '__YAY__' >"$HOME/.config/yay/config.json"
 {
@@ -59,6 +73,11 @@ cat <<- '__YAY__' >"$HOME/.config/yay/config.json"
 }
 
 __YAY__
+
+echo "permit nopass keepenv $USER" >/tmp/doas.conf
+sudo chown root:root   /tmp/doas.conf
+sudo chmod 600         /tmp/doas.conf
+sudo mv /tmp/doas.conf /etc
 
 mkdir -p "$HOME/.config/paru"
 cat <<- '__PARU__' > "$HOME/.config/paru/paru.conf"

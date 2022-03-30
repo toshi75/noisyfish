@@ -3,7 +3,7 @@ function ec
         nvim (which $argv[1]) ||
         xdg-open (which $argv[1])
     else
-        if [ "$(echo $argv[1] |
+        if [ "(echo $argv[1] |
              grep -e nvim -e vim -e vi \
                   -e gedit -e pluma -e xed)" != "" ]
             set -l Editor $argv[1]

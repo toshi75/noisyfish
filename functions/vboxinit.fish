@@ -12,7 +12,7 @@ function vboxinit
                    --sort rate       \
                    --save /etc/pacman.d/mirrorlist
     sudo pacman -S --noconfirm --needed \
-         base-devel git axel xsel xclip  noto-fonts-emoji \
+         base-devel git axel xsel xclip noto-fonts-emoji \
          pluma otf-ipafont opendoas docker
     sudo pacman -Rsn --noconfirm --needed \
                 virtualbox-guest-utils-nox 2>/dev/null
@@ -61,8 +61,9 @@ function vboxinit
     doas pacman -Rsn --noconfirm --needed \
          vi {,neo}vim yt-dlp \
          wget aria2 yad 2>/dev/null
-    yay -S --needed neovim-git neovim-symlinks dein-vim-git
-    yay -S --needed --noconfirm \
+    yay -S --needed --noconfirm --useask \
+        neovim-git neovim-symlinks dein-vim-git
+    yay -S --needed --noconfirm --useask \
         {yt-dlp,gallery-dl}-git yt-dlp-drop-in \
         aria2-fast wget{,2}-git pluma-plugins \
         nautilus nautilus-terminal mediainfo \
@@ -74,7 +75,7 @@ function vboxinit
         fd lsd ttf-delugia-code lumins libxfce4ui-nocsd \
         gtk3-nocsd-legacy-git gedit-menubar gedit-plugins-git \
         editorconfig-gedit-git gedit-smart-home gedit-panel-toggler \
-        google-chrome terminator alacritty-git yad-git \
+        google-chrome terminator {alacritty,yad}-git \
         asp nautilus-mediainfo
 end
 

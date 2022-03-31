@@ -66,7 +66,7 @@ function vboxinit
         {yt-dlp,gallery-dl}-git yt-dlp-drop-in \
         aria2-fast wget{,2}-git pluma-plugins \
         nautilus nautilus-terminal mediainfo \
-        libfdk-aac phantomjs-bin openh264-bin \
+        libfdk-aac phantomjs-bin openh264 \
         tilix xed nomacs rsync rclone unison p7zip \
         papirus-icon-theme pamac-aur fzf peco gimp \
         inkscape svgo microsoft-edge-stable-bin ocs-url \

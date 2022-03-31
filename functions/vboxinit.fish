@@ -1,10 +1,12 @@
 function vboxinit
+    cd (pwd)
     fisher update
     fisher install patrickf1/colored_man_pages.fish
     fisher install PatrickF1/fzf.fish
     fisher install edc/bass
     fisher install laughedelic/fish_logo
     fisher install jethrokuan/z
+    sudo pacman -Syu
     sudo pacman -S --noconfirm --needed reflector
     sudo reflector --latest 20       \
                    --protocol http   \
@@ -50,11 +52,11 @@ function vboxinit
     git clone http://aur.archlinux.org/paru-bin.git
     cd ./yay-bin
     makepkg -Ccsi --noconfirm
-
     cd ../paru-bin
     makepkg -Ccsi --noconfirm
     cd ..
-    rm -fr ./{yay,paru}-bin
+    rm -fr ./yay-bin
+    rm -fr ./paru-bin
     yay --save --nodiffmenu --removemake \
         --sudo /usr/bin/doas --mflags ' -Cc '
 

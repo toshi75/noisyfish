@@ -13,6 +13,9 @@ function vboxinit
     sudo pacman -S --noconfirm --needed \
          base-devel git axel xsel xclip  noto-fonts-emoji \
          pluma otf-ipafont opendoas docker
+    sudo pacman -Rsn --noconfirm --needed \
+                virtualbox-guest-utils-nox 2>/dev/null
+    sudo pacman -S --noconfirm --needed virtualbox-guest-utils
     echo "permit nopass keepenv $USER" >doas.conf
     sudo chown root:root doas.conf
     sudo chmod 600 doas.conf
@@ -53,12 +56,42 @@ function vboxinit
     rm -fr ./{yay,paru}-bin
     yay --save --nodiffmenu --removemake \
         --sudo /usr/bin/doas --mflags ' -Cc '
-    yay -S --needed neovim neovim-symlinks dein-vim-git
+
+    if ( type vi &>/dev/null ) ;then
+        yay -Rsn --noconfirm vi
+    fi
+    if ( type vim &>/dev/null ) ;then
+        yay -Rsn --noconfirm vim
+    fi
+    if ( type nvim &>/dev/null ) ;then
+        yay -Rsn --noconfirm neovim
+    fi
+    if ( type yt-dlp &>/dev/null ) ;then
+        yay -Rsn --noconfirm yt-dlp
+    fi
+    if ( type wget &>/dev/null ) ;then
+        yay -Rsn --noconfirm wget
+    fi
+    if ( type aria2c &>/dev/null ) ;then
+        yay -Rsn --noconfirm aria2
+    fi
+    if ( type yad &>/dev/null ) ;then
+        yay -Rsn --noconfirm yad
+    fi
+    yay -S --needed neovim-git neovim-symlinks dein-vim-git
     yay -S --needed --noconfirm \
         {yt-dlp,gallery-dl}-git yt-dlp-drop-in \
         aria2-fast wget{,2}-git pluma-plugins \
-        fish fisher nautilus nautilus-terminal \
+        nautilus nautilus-terminal mediainfo \
+        libfdk-aac phantomjs-bin openh264-bin \
         tilix xed nomacs rsync rclone unison p7zip \
-        papirus-icon-theme pamac-aur
+        papirus-icon-theme pamac-aur fzf peco gimp \
+        inkscape svgo microsoft-edge-stable-bin ocs-url \
+        avidemux-{qt,cli} tageditor-cli jdupes-git ripgrep-git \
+        fd lsd ttf-delugia-code lumins libxfce4ui-nocsd \
+        gtk3-nocsd-legacy-git gedit-menubar gedit-plugins-git \
+        editorconfig-gedit-git gedit-smart-home gedit-panel-toggler \
+        google-chrome terminator alacritty-git yad-git \
+        asp nautilus-mediainfo
 end
 

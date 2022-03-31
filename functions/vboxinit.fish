@@ -1,4 +1,5 @@
 function vboxinit
+    fisher update
     fisher install patrickf1/colored_man_pages.fish
     fisher install PatrickF1/fzf.fish
     fisher install edc/bass

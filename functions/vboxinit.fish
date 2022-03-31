@@ -48,35 +48,38 @@ function vboxinit
     git clone http://aur.archlinux.org/yay-bin.git
     git clone http://aur.archlinux.org/paru-bin.git
     cd ./yay-bin
-    makepkg -Ccsi
+    makepkg -Ccsi --noconfirm
 
     cd ../paru-bin
-    makepkg -Ccsi
+    makepkg -Ccsi --noconfirm
     cd ..
     rm -fr ./{yay,paru}-bin
     yay --save --nodiffmenu --removemake \
         --sudo /usr/bin/doas --mflags ' -Cc '
 
+    doas pacman -Rsn --noconfirm --needed \
+         vi {,neo}vim yt-dlp \
+         wget aria2 yad 2>/dev/null
     if ( type vi &>/dev/null ) ;then
-        yay -Rsn --noconfirm vi
+        doas pacman -Rsn --noconfirm vi
     fi
     if ( type vim &>/dev/null ) ;then
-        yay -Rsn --noconfirm vim
+        doas pacman -Rsn --noconfirm vim
     fi
     if ( type nvim &>/dev/null ) ;then
-        yay -Rsn --noconfirm neovim
+        doas pacman -Rsn --noconfirm neovim
     fi
     if ( type yt-dlp &>/dev/null ) ;then
-        yay -Rsn --noconfirm yt-dlp
+        doas pacman -Rsn --noconfirm yt-dlp
     fi
     if ( type wget &>/dev/null ) ;then
-        yay -Rsn --noconfirm wget
+        doas pacman -Rsn --noconfirm wget
     fi
     if ( type aria2c &>/dev/null ) ;then
-        yay -Rsn --noconfirm aria2
+        doas pacman -Rsn --noconfirm aria2
     fi
     if ( type yad &>/dev/null ) ;then
-        yay -Rsn --noconfirm yad
+        doas pacman -Rsn --noconfirm yad
     fi
     yay -S --needed neovim-git neovim-symlinks dein-vim-git
     yay -S --needed --noconfirm \

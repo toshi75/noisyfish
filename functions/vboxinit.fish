@@ -4,30 +4,44 @@ function vboxinit
     fisher install edc/bass
     fisher install laughedelic/fish_logo
     fisher install jethrokuan/z
-    sudo pacman -S --needed --noconfirm noto-fonts-emoji
-    sudo groupadd vboxusers
-    sudo groupadd vboxfs
-    sudo gpasswd -a $USER vboxusers
-    sudo gpasswd -a $USER vboxfs
-    sudo gpasswd -a $USER storage
-    sudo gpasswd -a $USER wheel
-    sudo gpasswd -a $USER video
-    sudo gpasswd -a $USER disk
-    sudo gpasswd -a $USER audio
-    mkdir -p $HOME/{dt,dl,pic,dotfiles/{Template,bin},Autosave,shared}
-
-    sudo rmdir /usr/local/bin &&
-    sudo ln -s $HOME/dotfiles/bin /usr/local
-
+    sudo pacman -S --noconfirm --needed reflector
+    sudo reflector --latest 20       \
+                   --protocol http   \
+                   --protocol https  \
+                   --sort rate       \
+                   --save /etc/pacman.d/mirrorlist
     sudo pacman -S --noconfirm --needed \
-         base-devel git axel xsel xclip \
-         pluma pluma-plugins otf-ipafont opendoas
+         base-devel git axel xsel xclip  noto-fonts-emoji \
+         pluma otf-ipafont opendoas docker
     echo "permit nopass keepenv $USER" >doas.conf
     sudo chown root:root doas.conf
     sudo chmod 600 doas.conf
     sudo mv doas.conf /etc
     echo "$USER ALL=NOPASSWD: ALL" |xsel -bi
-    sudo visudo
+
+#    sudo groupadd vboxusers
+#    sudo groupadd vboxfs
+#    sudo gpasswd -a $USER vboxusers
+#    sudo gpasswd -a $USER vboxfs
+#    sudo gpasswd -a $USER storage
+#    sudo gpasswd -a $USER wheel
+#    sudo gpasswd -a $USER video
+#    sudo gpasswd -a $USER disk
+#    sudo gpasswd -a $USER audio
+    for i in {vbox{usrs,sf},docker}
+        sudo groupadd $i
+    end
+    for i in {vbox{usrs,sf},docker,wheel,video,audio,disk,storage,docker}
+        sudo gpasswd -a $USER $i
+    end
+    mkdir -p $HOME/{dt,dl,pic,dotfiles/{Template,bin},Autosave,shared}
+
+    sudo rmdir /usr/local/bin &&
+    sudo ln -s $HOME/dotfiles/bin /usr/local
+
+#    su
+#    set EDITOR pluma ;visudo
+#    exit
     git clone http://aur.archlinux.org/yay-bin.git
     git clone http://aur.archlinux.org/paru-bin.git
     cd ./yay-bin
@@ -37,5 +51,14 @@ function vboxinit
     makepkg -Ccsi
     cd ..
     rm -fr ./{yay,paru}-bin
-    yay -S --needed --noconfirm neovim neovim-symlinks {yt-dlp,gallery-dl}-git yt-dlp-drop-in
+    yay --save --nodiffmenu --removemake \
+        --sudo /usr/bin/doas --mflags ' -Cc '
+    yay -S --needed neovim neovim-symlinks dein-vim-git
+    yay -S --needed --noconfirm \
+        {yt-dlp,gallery-dl}-git yt-dlp-drop-in \
+        aria2-fast wget{,2}-git pluma-plugins \
+        fish fisher nautilus nautilus-terminal \
+        tilix xed nomacs rsync rclone unison p7zip \
+        papirus-icon-theme pamac-aur
 end
+

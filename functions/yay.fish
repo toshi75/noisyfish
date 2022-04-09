@@ -12,10 +12,11 @@ function yay
         sudo pacman -S --needed --noconfirm base-devel git
         git clone https://aur.archlinux.org/yay-bin.git
         cd (pwd)/yay-bin
+        makepkg -printsrcinfo >.SRCINFO
         makepkg -Ccsi
         cd ..
         /usr/bin/rm -fr ./yay-bin
-        yay --save --sudoloop --removemake --nodiffmenu \
-            --useask --mflags " -Cc --needed "
+        yay --save --removemake --nodiffmenu \
+            --useask --mflags " -Cc "
     end
 end

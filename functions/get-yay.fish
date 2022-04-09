@@ -10,7 +10,7 @@ function get-yay
     ./*/yay --save --nodiffmenu --removemake \
             --useask --mflags ' -Cc '
     ./*/yay -Syu --needed --noconfirm \
-            {yay,paru}-bin asp bat devtools opendoas
+            {yay,paru}-bin asp bat devtools opendoas base-devel git
     popd
     if [ ! -f $HOME/.config/paru/paru.conf ]
         mkdir -p $HOME/.config/paru

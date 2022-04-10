@@ -4,6 +4,11 @@ function fish_prompt --description 'Write out the prompt'
     # fisher install jethrokuan/z edc/bass jethrokuan/fzf laughedelic/fish_logo patrickf1/colored_man_pages.fish
     # ryotako/fish-vimcolor
 
+  if [ ! -x /usr/bin/fc-list ]
+    echo "fc-list: Not found."
+    echo "install fontconfig."
+  end
+
   # Line 1
     set -l HEAD '-'
     set -l TAIL '-'

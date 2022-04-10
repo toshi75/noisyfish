@@ -9,7 +9,7 @@ function fish_prompt --description 'prompt'
     echo "install fontconfig."
   end
 
-function zz
+
   if [ ! -f $HOME/.config/fish/fish_plugins ] ||
      [ (cat $HOME/.config/fish/fish_plugins |wc -l) -le 1 ]
     mkdir -p $HOME/.config/fish
@@ -20,7 +20,6 @@ function zz
     echo 'laughedelic/fish_logo'            >>$HOME/.config/fish/fish_plugins
     echo 'jethrokuan/z'                     >>$HOME/.config/fish/fish_plugins
   end
-end
 
   # Line 1
     set -l HEAD '-'

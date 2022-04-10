@@ -11,14 +11,13 @@ function fish_prompt --description 'prompt'
 
   if [ ! -f $HOME/.config/fish/fish_plugins ]
     mkdir -p $HOME/.config/fish
-    string trim "
-toshi75/noisyfish
-patrickf1/colored_man_pages.fish
-PatrickF1/fzf.fish
-edc/bass
-laughedelic/fish_logo
-jethrokuan/z
-    " >$HOME/.config/fish/fish_plugins
+    {   echo 'toshi75/noisyfish'
+        echo 'patrickf1/colored_man_pages.fish'
+        echo 'PatrickF1/fzf.fish'
+        echo 'edc/bass'
+        echo 'laughedelic/fish_logo'
+        echo 'jethrokuan/z'
+    } >$HOME/.config/fish/fish_plugins
   end
 
 

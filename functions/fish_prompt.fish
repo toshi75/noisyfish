@@ -1,5 +1,5 @@
 # Defined in /tmp/fish.OpPOOt/fish_prompt.fish @ line 2
-function fish_prompt --description 'Write out the prompt'
+function fish_prompt --description 'prompt'
     # toshi75   https://github.com/toshi75/noisyfish
     # fisher install jethrokuan/z edc/bass jethrokuan/fzf laughedelic/fish_logo patrickf1/colored_man_pages.fish
     # ryotako/fish-vimcolor
@@ -8,6 +8,19 @@ function fish_prompt --description 'Write out the prompt'
     echo "fc-list: Not found."
     echo "install fontconfig."
   end
+
+  if [ ! -f $HOME/.config/fish/fish_plugins ]
+    mkdir -p $HOME/.config/fish
+    string trim "
+toshi75/noisyfish
+patrickf1/colored_man_pages.fish
+PatrickF1/fzf.fish
+edc/bass
+laughedelic/fish_logo
+jethrokuan/z
+    " >$HOME/.config/fish/fish_plugins
+  end
+
 
   # Line 1
     set -l HEAD '-'

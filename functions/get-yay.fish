@@ -2,6 +2,7 @@ function get-yay
     set -l WD (mktemp -d)
     trap '/usr/bin/rm -fr $WD' 0 1 2 3 15
     pushd $WD
+    sudo pacman -S --needed --noconfirm wget base-devel git
     wget (wget https://github.com/Jguer/yay/releases -O - |
           grep yay |grep _x86_64.tar.gz |head -n1 |
           sed -e 's|x86_64\.tar\.gz.*$|x86_64.tar.gz|g' \
@@ -11,6 +12,11 @@ function get-yay
             --useask --mflags ' -Cc '
     ./*/yay -Syu --needed --noconfirm \
             {yay,paru}-bin asp bat devtools opendoas base-devel git
+    # doas.conf
+    echo "permit nopass keepenv $USER" >/tmp/doas.conf
+    sudo chown root:root   /tmp/doas.conf
+    sudo chmod 600         /tmp/doas.conf
+    sudo mv /tmp/doas.conf /etc
     popd
     if [ ! -f $HOME/.config/paru/paru.conf ]
         mkdir -p $HOME/.config/paru
@@ -178,13 +184,13 @@ RemoveMake
 SortBy = popularity
     # <votes|popularity|name|base|submitted|modified|id|baseid>
     # Defaults to votes. Sort AUR results according to the
-    # options in "Sort by" visible here:
+    # options in 'Sort by' visible here:
     # https://aur.archlinux.org/packages/
 
 # SearchBy =
     # <name|name-desc|maintainer|depends|checkdepends|makedepends|optdepends>
     # Defaults to name-desc. Search AUR packages according to
-    # the options in "Search by" visible here:
+    # the options in 'Search by' visible here:
     # https://aur.archlinux.org/packages/
 
 # Limit = N

@@ -6,10 +6,29 @@ root = true
 
 
 [*]
-
 # Change these settings to your own preference
 indent_style = space
+indent_size = 4
+
+[*.fish]
+indent_style = space
+indent_size = 4
+
+[PKGBUILD]
+indent_style = space
 indent_size = 2
+
+[*PKGBUILD]
+indent_style = space
+indent_size = 2
+
+[PKGBUILD*]
+indent_style = space
+indent_size = 2
+
+[*.function]
+indent_style = space
+indent_size = 4
 
 # We recommend you to keep these unchanged
 end_of_line = lf
@@ -17,4 +36,19 @@ charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
 
+# Tab indentation (no size specified)
+[Makefile]
+indent_style = tab
+
+[*.md]
+trim_trailing_whitespace = false
+
+[*.py]
+indent_style = space
+indent_size = 4
+
+
+# [*.sh]
+# [*.fish]
+# [*.ksh]
 

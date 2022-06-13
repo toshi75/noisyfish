@@ -1,0 +1,69 @@
+function hs (){
+    local INPUT="$(echo "$1" |sed -e 's|file:\/\/||g')"
+    local START_SEC=120
+    local EXT="$(echo "$INPUT" |sed -e 's|^.*\.||g')"
+    local PATH_NOEXT="$(echo "$(basename "$INPUT")" |sed -e "s|\.\\$EXT||g")"
+    local TEMP_MOV=/tmp/headshot_temp.$EXT
+    local ORIG="${PATH_NOEXT}-ORIG_NOCUT.${EXT}"
+    while true ;do
+        START_SEC="$(
+            yad --entry --on-top \
+                --numeric --title='Set cutting point.' \
+                --center --no-markup \
+                --width=100 --height=10 \
+                --image="$HOME/dev/500x168.jpg" \
+                --image-on-top --buttons-layout="edge"   \
+                --button="|=> Exit <=|":99      \
+                --button="|=> APPLY <=|":0       \
+                --button="|=> Preview 30s <=|":10     \
+                --entry-text="$START_SEC"
+        )"
+        case $? in
+            0)  break ;;
+            99) exit  ;;
+            *)  :     ;;
+        esac
+
+        ffmpeg -y -ss "$START_SEC" -i "$INPUT" -t 30  \
+               -c copy "$TEMP_MOV" ||
+        ffmpeg -y -safe 0 -ss "$START_SEC" -i "$INPUT" -t 30  \
+               -c copy "$TEMP_MOV"
+        mpv "$TEMP_MOV"
+    done
+    \rm "$TEMP_MOV"
+    local ORIG="${PATH_NOEXT}-ORIG_NOCUT.${EXT}"
+    mv -b "$INPUT" "$ORIG"
+    if [[ "$EXT" = "mp4" ]] ;then
+        ffmpeg -y -ss "$START_SEC" -i "$ORIG" \
+               -c copy \
+               -movflags +faststart "${PATH_NOEXT}-working.${EXT}" ||
+        ffmpeg -y -safe 0 -ss "$START_SEC" -i "$ORIG" \
+               -c copy \
+               -movflags +faststart "${PATH_NOEXT}-working.${EXT}"
+    else
+        ffmpeg -y -ss "$START_SEC" -i "$ORIG" \
+               -c copy "${PATH_NOEXT}-working.${EXT}" ||
+        ffmpeg -y -safe 0 -ss "$START_SEC" -i "$ORIG" \
+               -c copy "${PATH_NOEXT}-working.${EXT}"
+    fi
+
+    mv -b "${PATH_NOEXT}-working.${EXT}" "$INPUT"
+
+    yad --timeout=20 \
+        --timeout-indicator='left' \
+        --on-top \
+        --title='Head shot' \
+        --center \
+        --width=300 \
+        --escape-ok \
+        --skip-taskbar \
+        --no-markup \
+        --text="\n$(basename "$INPUT")\ncomplete." \
+        --text-align='center' \
+        --buttons-layout="center"   \
+        --button="||  O K  ||":0
+
+    [[ -d $HOME/.cache/thumbnails/fail ]] && rm -fr $HOME/.cache/thumbnails/fail
+    return 0
+}
+

@@ -1,0 +1,61 @@
+function avglecut (){
+    local DIR="$(pwd)"
+    cd "${DIR}"
+    local ALL="$#"
+    local   N=1
+    until [[ "$1" = "" ]] ;do
+        local CHKMOOV="$(
+            tageditor --info --files "$1" |
+            grep "position" |grep -ci "after"
+        )"
+        if [[ "${CHKMOOV}" -eq 0 ]] ;then
+            echo 'Index position: before data'
+            echo 'Moov, Already optimized.'
+            local MOVFLAGS=""
+        else
+            local MOVFLAGS=" -movflags faststart "
+        fi
+
+        cd "$(cd "$(dirname "$1")";pwd)"
+        echo "####  $N/$ALL  #####"
+        mv -b "$1" "$(dirname "$1")/$(basename "$1" .mp4)_NOCUTORIG.mp4"
+        ffmpeg -hide_bunner -threads auto            -ss 4 \
+               -i "$(dirname "$1")/$(basename "$1" .mp4)_NOCUTORIG.mp4" \
+               -c copy ${MOVFLAGS} "$1" ||
+        ffmpeg -hide_bunner -threads auto -y -safe 0 -ss 4 \
+               -i "$(dirname "$1")/$(basename "$1" .mp4)_NOCUTORIG.mp4" \
+               -c copy ${MOVFLAGS} "$1"
+        let N++
+        shift
+    done
+    cd "${DIR}"
+    return 0
+}
+alias avgcut='avglecut '
+alias glecut='avglecut '
+alias  avcut='avglecut '
+
+### Old Ver. #########
+#function avglecut (){
+#    local ALL="$#"
+#    local N=1
+#    until [[ "$1" = "" ]] ;do
+#        cd "$(cd "$(dirname "$1")";pwd)"
+#        local dot_EXT="$(echo "$1" |sed -e 's|^.*\.|.|g')"
+#        local PATH_NOEXT="$(echo "$1" |sed -e 's|\....$||g')"
+#        local ORIG_FILE="${PATH_NOEXT}_ORIG_NOCUT${dot_EXT}"
+#        echo "#=#=# $N / $ALL #=#=#"
+#        mv -b "$1" "${ORIG_FILE}"
+#        ffmpeg -hide_banner -ss 4 \
+#               -i "${ORIG_FILE}" \
+#               -c copy "${PATH_NOEXT}.mp4" ||
+#        ffmpeg -hide_banner -y -safe 0 -ss 4 \
+#               -i "${ORIG_FILE}" \
+#               -c copy "${PATH_NOEXT}.mp4"
+#        shift
+#        let N++
+#        echo ""
+#        echo ""
+#    done
+#}
+

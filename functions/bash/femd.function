@@ -1,0 +1,4 @@
+function femd (){
+    axel -o "$(echo "$1" |tr a-z A-Z).mp4" "$(xsel -bo)"
+}
+

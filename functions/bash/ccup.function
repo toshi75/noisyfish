@@ -1,0 +1,4 @@
+function ccup (){
+    unison -auto -batch -silent "/var/toshi75/ccache" "/tmp/.ccache"
+}
+

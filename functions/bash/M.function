@@ -1,0 +1,6 @@
+function M (){
+    man  "$1"  2>/dev/null
+    tldr "$1"  2>/dev/null
+    return 0
+}
+

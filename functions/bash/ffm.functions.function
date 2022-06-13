@@ -1,0 +1,47 @@
+function ffm (){
+    if [[ "$1" = "-a" || "$1" = "--ask" ]] ;then
+        local ASK="true"
+        local IN="$2"
+    else
+        local ASK="false"
+        local IN="$1"
+    fi
+    until [[ "$IN" = "" ]] ;do
+        cd "$(cd "$(dirname "$IN")";pwd)"
+        local DOTEXT="$(echo "$IN" |sed -e 's|^.*\.|.|g')"
+        local ORIG="$(
+            mv -b "$IN" "$(echo "$IN" |sed -e 's|\....$||g')-ORIG${DOTEXT}"
+        )"
+        ffmpeg -hide_banner -threads auto \
+               -i "$ORIG" -c copy -movflags faststart "$IN" ||
+        ffmpeg -hide_banner -threads auto -safe 0 \
+               -i "$ORIG" -c copy -movflags faststart "$IN"
+        shift
+        if [[ $ASK ]] ;then
+            echo ""
+            echo "$(basename "$IN") Coverted"
+            echo "###########################################"
+            echo "      Continue: Hit any key.  Quite: q"
+            echo "###########################################"
+            local WAIT
+            read -sn 1 -p 'Waiting...' WAIT
+            [[ "$WAIT" = "q" ]] && break
+        fi
+    done
+    echo ""
+    return 0
+}
+
+function ffmp (){
+    ORIG="${1}_ORIG.$(echo "$1" |sed -e 's|^.*\.||g')"
+    mv -b "$1" "$ORIG"
+    printf '\033[?7l' # DISable word wrap.
+    ffmpeg -hide_banner -threads auto \
+           -i "$ORIG" -c copy "$2" "$1" ||
+    ffmpeg -hide_banner -threads auto -safe 0 \
+           -i "$ORIG" -c copy "$2" "$1"
+    printf '\033[?7h' # ENable  word wrap.
+    return 0
+}
+
+

@@ -1,0 +1,23 @@
+function movselect (){
+    printf '\033[?7l' # DISable word wrap.
+    cd "$(pwd)"
+    for i in *.* ;do
+        if [[ "$(echo "$i" |grep -e mp4$)" != "" ]] ;then
+            if [[ "$(mediainfo "$i" |
+                     sed -e 's|\s||g' |
+                     grep -c 'Cover:Yes')" -eq 0 ]] ;then
+                mkdir      -p ./0-NOCOVER
+                mv -b "$i" -t ./0-NOCOVER
+            fi
+        elif [[ "$(echo "$i" |
+                   grep -e mkv$ -e avi$ \
+                        -e wmv$ -e flv$)" != "" ]] ;then
+            mkdir      -p ./0-AVI_FLV_MKV_WMV
+            mv -b "$i" -t ./0-AVI_FLV_MKV_WMV
+        fi
+    done
+
+    printf '\033[?7h' # ENable word wrap.
+    return 0
+}
+

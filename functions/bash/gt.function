@@ -1,0 +1,36 @@
+function gt (){
+    # gt: get torrent
+    DIR="$(pwd)"
+    cd "${DIR}"
+    local WD="$(mktemp -d)"
+    cd "${WD}"
+    {   case "$#" in
+            0)
+                xsel -bo
+            ;;
+            *)
+                until [[ "$1" = "" ]] ;do
+                    echo "$1"
+                    shift
+                done
+            ;;
+        esac
+    } >"${WD}"/LIST.txt
+    cat "${WD}"/LIST.txt |
+    awk '!x[$0]++' |sed '/^$/d' |
+    while read i ;do
+        aria2c --follow-torrent=false "$i"
+    done
+    if ( type dbrename &>/dev/null ) ;then
+        for i in *.torrent ;do
+            dbrename "$i"
+        done
+    fi
+    mv -b "${WD}"/*.torrent -t "${DIR}"
+    cd "${DIR}"
+    /usr/bin/rm -fr "${WD}"
+    echo ""
+    return 0
+}
+
+

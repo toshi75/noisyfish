@@ -1,0 +1,57 @@
+function mergesearch (){
+    local WORD="$1"
+    local PAGES
+    local FIRST_PAGE
+    local LAST_PAGE
+    local HEADER_TAIL
+    local BODY_HEAD
+    local BODY_TAIL
+    local FOOTTER_HEAD
+    local OUT="/tmp/$(uuidgen)"
+    local WD="$(mktemp -d)"
+
+    curl -#qkLSs "https://openloadpro.com/?s=${WORD}" >"${WD}/1.html"
+    PAGES="$(
+        cat "${WD}/1.html" |
+        nkf --url-input |tr '"' "\n" |
+        grep "\/page\/" |tail -n 1 |
+        sed -e 's|^.*page\/||g' -e 's|\/.*$||g'
+    )"
+    local N=2
+    while [[ "$N" -le "${PAGES}" ]] ;do
+        curl -#qkLSs "https://openloadpro.com/page/$N/?s=${WORD}" >"${WD}/${N}.html"
+        let N++
+    done
+
+
+    BODY_HEAD="$(
+        diff "${WD}/1.html" "${WD}/2.html" |head -n1 |sed -e 's|\,.*$||g'
+    )"
+    FOOTTER_HEAD="$(
+        diff "${WD}/1.html" "${WD}/2.html" |grep ^1 |sed '$d' |sed -n '$p' |sed -e 's|c.*$||g'
+    )"
+
+  # HEADER_TAIL=$((BODY_HEAD-1))
+  # FOOTTER_HEAD=1613
+  # BODY_TAIL=$((FOOTTER_HEAD-1))
+
+    {
+    # HEADER
+        cat "1.html" |head -n "${HEADER_TAIL}"
+
+    # CONTENTS
+        N=2
+        while [[ "$N" -lt "${PAGES}" ]] ;do
+            cat "${i}.html" |sed "${FOOTTER_HEAD},\$d" |sed "1,${HEADER_TAIL}d"
+            let N++
+        done
+
+    # FOOTTER
+        cat "${LAST_PAGE}" |sed "1,${BODY_TAIL}d"
+    } >"${OUT}.html"
+    xdg-open "${OUT}.html"
+    /usr/bin/rm "${OUT}.html"
+    return 0
+}
+
+

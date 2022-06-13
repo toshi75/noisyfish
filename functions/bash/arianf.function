@@ -1,0 +1,5 @@
+function arianf (){
+    until [[ "$1" = "" ]] ;do
+        aria2c --follow-torrent=false "$1"
+    done
+}

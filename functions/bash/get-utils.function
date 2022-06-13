@@ -1,0 +1,30 @@
+function get-utils (){
+    paru -S --needed --noconfirm \
+        fzf peco jq jshon yad-git \
+        upx svgo optipng \
+        etcher-bin ripgrep-git jdupes-git \
+        help2man go-md2man txt2man \
+        namcap pacman-contrib shc \
+        trash-cli shellcheck xsel xclip \
+        xkill-shortcut xorg-xkill
+    cat <<- '____SHELLCHECK' >$HOME/.config/shellcheckrc
+#
+# $HOME/.config/shellcheckrc
+#
+shell=bash
+color=auto
+disable=SC2001
+disable=SC2002
+disable=SC2010
+disable=SC2012
+disable=SC2140
+disable=SC2155
+disable=SC2162
+disable=SC2164
+disable=SC2181
+disable=SC2219
+
+____SHELLCHECK
+    return 0
+}
+

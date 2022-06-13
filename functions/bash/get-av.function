@@ -1,0 +1,9 @@
+function get-av (){
+    paru -S --needed  \
+        nomacs mpv-pipewire \
+        qimgv-git vlc mediainfo \
+        avidemux-qt mkvtoolnix-gui \
+        audacity pulseaudio-equalizer-ladspa
+    return 0
+}
+

@@ -1,0 +1,3 @@
+linuxiso (){
+    cp -sb $HOME/{dl,*/linuxiso}/*.iso -t ./
+}

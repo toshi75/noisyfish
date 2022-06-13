@@ -1,0 +1,5 @@
+function get-preload (){
+    paru -S --needed --noconfirm preload
+    doas systemctl enable --now preload.service
+    return 0
+}

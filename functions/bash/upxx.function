@@ -1,0 +1,31 @@
+function upxx (){
+    function _UPX (){
+        if [[ -x "$1" ]] &&
+           [[ "$(ls -l "$1" |awk '{print $5}')" -gt 100000000 ]] ;then
+            doas upx "$1"
+        elif [[ -x "$1" ]] ;then
+            doas upx --best "$1"
+        fi
+    }
+    export -f _UPX
+    {   case $# in
+            0)  find "$(pwd)" -not -type l -type f |
+                while read i ;do
+                    [[ -x "$i" ]] && echo "$i"
+                done    ;;
+            *)  until [[ "$1" = "" ]] ;do
+                    if [[ -d "$1" ]] ;then
+                        find "$1" -not -type l -type f |
+                        while read i ;do
+                            [[ -x "$i" ]] && echo "$i"
+                        done
+                    elif [[ -x "$1" ]] && [[ ! -h "$1" ]] ;then
+                        echo "$i"
+                    fi
+                    shift
+                done    ;;
+        esac
+    }  |xargs -P8 -I{} bash -c '_UPX {}'
+    return 0
+}
+

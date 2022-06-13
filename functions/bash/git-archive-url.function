@@ -1,0 +1,25 @@
+function git-archive-url (){
+    if [[ "$#" -eq 0 ]] ||
+       [[ "$1" = "-h"   || "$1" = "--help" ]] ;then
+       echo "Usage: This_function \"git-repo-url\"(https://...git)"
+       echo "       then, display tarball,zip url."
+       return 100
+    fi
+
+  # local ARCHIVE_NAME="${1%%.git}/archive/refs/heads/master"
+  # local TAR_URL="${ARCHIVE_NAME}.tar.gz"
+  # local ZIP_URL="${ARCHIVE_NAME}.zip"
+
+    export TAR_URL="$(
+        echo "$1" |
+        sed -e 's|\.git$|/archive/refs/heads/master.tar.gz|g'
+    )"
+    export ZIP_URL="$(
+        echo "$1" |
+        sed -e 's|\.git$|/archive/refs/heads/master.zip|g'
+    )"
+    echo "TARBALL: ${TAR_URL}"
+    echo "ZIP: ${ZIP_URL}"
+    return 0
+}
+

@@ -1,0 +1,48 @@
+function H (){
+    #########################################
+        if ( ! type tldr &>/dev/null ) ;then
+            echo "Install tool for tldr."
+            doas pacman -S --needed --noconfirm tealdeer ||
+            sudo pacman -S --needed --noconfirm tealdeer
+            tldr --update
+        fi
+        # Autoupdate enabled when startup.
+        #  =>/usr/local/bin/startup.sh
+    #########################################
+
+    echo ""
+    echo "###########################################"
+    until [[ "$1" = "" ]] ;do
+        if ( man "$1" &>/dev/null ) ;then
+            echo "### man: \"$1\", found. ###############"
+            tldr "$1"
+        else
+            echo "### man: \"$1\", Not found. ###############"
+            echo ""
+        fi
+        if   ( eval "$1 help"        &>/dev/null ) ;then
+            eval "$1 help"
+        elif ( eval "$1 --help-full" &>/dev/null ) ;then
+            eval "$1 --help-full"
+        elif ( eval "$1 --help-all"  &>/dev/null ) ;then
+            eval "$1 --help-all"
+        elif ( eval "$1 --help-long" &>/dev/null ) ;then
+            eval "$1 --help-long"
+        else
+            eval "$1 --help"
+        fi
+        if ( tldr "$1" &>/dev/null ) ;then
+            echo ""
+            echo "### tldr: \"$1\", found. ###############"
+            tldr "$1"
+        else
+            echo ""
+            echo "### tldr: \"$1\", Not found. ###############"
+            echo ""
+        fi
+        shift
+    done
+    return 0
+}
+alias hh='H'
+

@@ -1,0 +1,64 @@
+function snswatch (){
+    local TW ;local IN ;local TU
+    TW="$(cat <<- '#_______TW'
+    milk06051
+    naana_chan
+    nanami__lala
+    peachRin_v
+
+#_______TW
+    )"
+    IN="$(cat <<- '#_______IN'
+#_______IN
+    )"
+    TU="$(cat <<- '#_______TU'
+#_______TU
+    )"
+##########################
+    local ALIVE="0-snswatch-$(date '+%Y%m%d-%H%M%S')"
+    {
+        [[ "$TW" = "" ]] || {
+            echo "$TW" |while read i ;do
+                if [[ "$(echo "$i" |tr -d " " |
+                         grep -c ^http)" -eq 0 ]] ;then
+                    echo "$i" |tr -d " "|
+                    sed -e 's|^|https://twitter.com/|g'
+                else
+                    echo "$i"
+                fi
+            done
+        }
+        [[ "$IN" = "" ]] || {
+            echo "$IN" |while read i ;do
+                if [[ "$(echo "$i" |tr -d " " |
+                         grep -c ^http)" -eq 0 ]] ;then
+                    echo "$i" |tr -d " " |
+                    sed -e 's|^|https://instagram.com/|g'
+                else
+                    echo "$i"
+                fi
+            done
+        }
+        [[ "$IN" = "" ]] || {
+            echo "$TU" |while read i ;do
+                if [[ "$(echo "$i" |tr -d " " |
+                         grep -c ^http)" -eq 0 ]] ;then
+                    echo "$i" |tr -d " "|
+                    sed -e 's|^|https://|g' \
+                        -e 's|$|.tumblr.com|g'
+                else
+                    echo "$i"
+                fi
+            done
+        }
+    } |sort -Ru |sed '/^$/d' >./${ALIVE}.running
+    y ./${ALIVE}.running
+    mv ./${ALIVE}.running ./${ALIVE}.log
+}
+
+
+
+
+
+
+

@@ -1,0 +1,34 @@
+function lolita (){
+    local USE
+    local XXX
+
+    if [[ "$1" = "-u" || "$1" = "--update" ]] ;then
+        /usr/local/bin/loup
+        exit 0
+    fi
+
+    USE=1
+    case "$USE" in
+        1)
+            lolcate --db video -i -b $* |sort
+            ;;
+        2)
+            lolcate --db video -i -b $* |
+            rg -v \.Trash |
+            rg -v -e \/twi -e uraaka -e qB$ -e \/usr -e \/opt |
+            rg -e mkv$ -e mp4$ -e m4v$ -e avi$ \
+               -e wmv$ -e flv$ -e mov$ -e iso$ \
+               -e webm$  -e mkv\~$ -e mp4\~$ -e m4v\~$ -e avi\~$ \
+               -e wmv\~$ -e flv\~$ -e mov\~$ -e iso\~$ -e webm\~$ |
+            awk 4 |
+            while read XXX ;do
+                if [[ -f "$XXX" ]] && [[ ! -h "$XXX" ]] ;then
+                    echo "$XXX"
+                fi
+            done |sort
+            ;;
+    esac
+}
+
+alias lol='lolita'
+alias loli='lolita'

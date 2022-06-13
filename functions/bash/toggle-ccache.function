@@ -1,0 +1,40 @@
+function toggle-ccache (){
+    local TT
+    local CCACHE_NOW
+    TT="$(mktemp)"
+    if [[ "$(cat /etc/makepkg.conf |
+             grep -v '#' |grep -c '!ccache')" -eq 1 ]] ;then
+        local CCACHE_NOW=DISABLED
+    else
+        local CCACHE_NOW=ENABLED
+    fi
+    case "${CCACHE_NOW}" in
+        DISABLED)   ### disable => enable #######
+            cat /etc/makepkg.conf |
+            while read i ;do
+                if [[ "$(echo "$i" |grep -c '#')" -eq 0 ]] ;then
+                    echo "$i" |sed -e 's|!ccache| ccache|g'
+                else
+                    echo "$i"
+                fi
+            done >>"$TT"
+            echo "ccache disabled => ENabled, NOW."
+            ;;
+        ENABLED)   ### enable => disable #######
+            cat /etc/makepkg.conf |
+            while read i ;do
+                if [[ "$(echo "$i" |grep -c '#')" -eq 0 ]] ;then
+                    echo "$i" |sed -e 's|\sccache| !ccache|g'
+                else
+                    echo "$i"
+                fi
+            done >>"$TT"
+            echo "ccache ENabled => DISabled, NOW."
+            ;;
+    esac
+    doas mv -f "$TT" -T /etc/makepkg.conf
+    return 0
+}
+alias change-ccache='toggle-ccache'
+alias ccache-change='toggle-ccache'
+

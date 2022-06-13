@@ -1,0 +1,13 @@
+function own (){
+    until [[ "$1" = "" ]] ;do
+        if   [[ -d "$1" ]] ;then
+            doas chown "$USER" -R "$1" ||
+            sudo chown "$USER" -R "$1"
+        elif [[ -f "$1" ]] ;then
+            doas chown "$USER" "$1" ||
+            sudo chown "$USER" "$1"
+        fi
+        shift
+    done
+}
+

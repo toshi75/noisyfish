@@ -1,0 +1,7 @@
+function pick-dups (){
+    cat /tmp/movlocate/*.txt |
+    sed -e 's|^.*\/||g' -e 's|\..*$||g' |
+    sort |
+    uniq -d >./pick-dups.txt
+    return 0
+}

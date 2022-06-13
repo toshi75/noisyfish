@@ -1,0 +1,17 @@
+function ljk (){
+    # Link BacK: move files, then set symlink.
+    # Usage: lbk  /1dir/send/to  /files/to/move ....
+    cd "$(pwd)"
+    until [[ "$1" = "" ]] ;do
+        if [[ -f "$(pwd)/$(basename "$2")" ]] ;then
+            echo "$(basename "$2"):"
+            echo "Found a file with the same name in:"
+            echo "${MVto}"
+        else
+            rsync -Pahvz --remove-source-files "$1" "$(pwd)"
+            ln -s "$(pwd)/$(basename "$1")" -t "$(dirname "$2")"
+        fi
+        shift
+    done
+}
+

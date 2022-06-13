@@ -1,0 +1,146 @@
+####  TODO: Select makepkg.conf  ####
+#makepkg -Cc --config /etc/makepkg.conf noccache noupx
+
+#makepkg -Cc --config /etc/makepkg.conf noccache   UPX
+
+## ccache ENV
+#if (type ccache &>/dev/null) ;then
+#    export CCACHE_DIR="/tmp/.cache"
+#    export CCACHE_CONFIGPATH="$CCACHE_DIR"/ccache.config
+#    export CCACHE_STOCK_DIR="/var/$USER/ccache"
+#fi
+#makepkg -Cc --config /etc/makepkg.conf   CCACHE noupx
+
+## ccache ENV
+#if (type ccache &>/dev/null) ;then
+#    export CCACHE_DIR="/tmp/.cache"
+#    export CCACHE_CONFIGPATH="$CCACHE_DIR"/ccache.config
+#    export CCACHE_STOCK_DIR="/var/$USER/ccache"
+#fi
+#makepkg -Cc --config /etc/makepkg.conf   CCACHE   UPX
+
+#############
+
+#makepkg -Ccs --config /etc/makepkg.conf
+
+#############
+
+#makepkg -Ccis --config /etc/makepkg.conf
+
+####  TODO: Select makepkg.conf  ####
+
+function mk-i (){
+    local DIR="$(pwd)"
+    local TT="$(mktemp)"
+    local SKIPPGP=""
+    local SKIPSUM=""
+    cd "$DIR"
+    until [[ "$1" = "" ]] ;do
+        if   [[ -d "$1" ]] ;then
+            cd "$1"
+        elif [[ -f "$1" ]] ;then
+            cd "$(dirname "$1")"
+        elif [[ "$1" = "--skippgp" || "$1" = "--skippgpcheck" ]] ;then
+            SKIPPGP="--skippgpcheck"
+            shift
+        elif [[ "$1" = "--skipsum" || "$1" = "--skipchecksums" ]] ;then
+            SKIPSUM="--skipchecksums"
+            shift
+        else
+            echo -n "$1 "
+        fi
+        shift
+    done |awk 4 >"$TT"
+    makepkg --printsrcinfo >.SRCINFO
+    makepkg -Cci "$SKIPSUM" "$SKIPPGP" "$(cat "$TT")" #--needed
+    \rm "$TT"
+    cd "$DIR"
+}
+function mk-is (){
+    local DIR="$(pwd)"
+    local TT="$(mktemp)"
+    local SKIPPGP=""
+    local SKIPSUM=""
+
+    cd "$DIR"
+    until [[ "$1" = "" ]] ;do
+        if   [[ -d "$1" ]] ;then
+            cd "$1"
+        elif [[ -f "$1" ]] ;then
+            cd "$(dirname "$1")"
+        elif [[ "$1" = "--skippgp" || "$1" = "--skippgpcheck" ]] ;then
+            SKIPPGP="--skippgpcheck"
+            shift
+        elif [[ "$1" = "--skipsum" || "$1" = "--skipchecksums" ]] ;then
+            SKIPSUM="--skipchecksums"
+            shift
+        else
+            echo -n "$1 "
+        fi
+        shift
+    done | awk 4 >"$TT"
+    makepkg --printsrcinfo >.SRCINFO
+    makepkg -Ccis "$SKIPSUM" "$SKIPPGP" "$(cat "$TT")" #--needed
+    \rm "$TT"
+    cd "$DIR"
+}
+alias mk-si='mk-is'
+function mk-s (){
+    local DIR="$(pwd)"
+    local TT="$(mktemp)"
+    local SKIPPGP=""
+    local SKIPSUM=""
+    cd "$DIR"
+    until [[ "$1" = "" ]] ;do
+        if   [[ -d "$1" ]] ;then
+            cd "$1"
+        elif [[ -f "$1" ]] ;then
+            cd "$(dirname "$1")"
+        elif [[ "$1" = "--skippgp" || "$1" = "--skippgpcheck" ]] ;then
+            SKIPPGP="--skippgpcheck"
+            shift
+        elif [[ "$1" = "--skipsum" || "$1" = "--skipchecksums" ]] ;then
+            SKIPSUM="--skipchecksums"
+            shift
+        else
+            echo -n "$1 "
+        fi
+        shift
+    done |awk 4 >"$TT"
+    makepkg --printsrcinfo >.SRCINFO
+    makepkg -Ccs "$SKIPSUM" "$SKIPPGP" "$(cat "$TT")" #--needed
+    \rm "$TT"
+    cd "$DIR"
+}
+function mk (){
+    local DIR="$(pwd)"
+    local TT="$(mktemp)"
+    local DIR="$(pwd)"
+    local TT="$(mktemp)"
+    cd "$DIR"
+    until [[ "$1" = "" ]] ;do
+        if   [[ -d "$1" ]] ;then
+            cd "$1"
+        elif [[ -f "$1" ]] ;then
+            cd "$(dirname "$1")"
+        elif [[ "$1" = "--skippgp" || "$1" = "--skippgpcheck" ]] ;then
+            SKIPPGP="--skippgpcheck"
+            shift
+        elif [[ "$1" = "--skipsum" || "$1" = "--skipchecksums" ]] ;then
+            SKIPSUM="--skipchecksums"
+            shift
+        else
+            echo -n "$1 "
+        fi
+        shift
+    done |awk 4 >"$TT"
+    makepkg --printsrcinfo >.SRCINFO
+    makepkg -Cc "$SKIPSUM" "$SKIPPGP" "$(cat "$TT")" #--needed
+    \rm "$TT"
+    cd "$DIR"
+}
+
+alias mksi='mk-is'
+alias mkis='mk-is'
+alias  mks='mk-s'
+

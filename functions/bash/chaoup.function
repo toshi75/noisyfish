@@ -1,0 +1,55 @@
+function chaoup (){
+    if ( ! pacman -Qi chaotic-keyring &>/dev/null ) ;then
+        sudo pacman -S --needed --noconfirm opendoas
+        echo "permit nopass keepenv $USER" >/tmp/doas.conf
+        sudo mv -f /tmp/doas.conf -t /etc
+        sudo chown root:root /etc/doas.conf
+        sudo chmod 600       /etc/doas.conf
+        if ( ! pacman -Qi powerpill &>/dev/null ) ;then
+            mkdir -p ./powerpill
+            cd ./powerpill
+            git clone https://aur.archlinux.org/powerpill.git
+            makepkg -Ccsi
+            cd ..
+            rm -fr ./powerpill
+        fi
+        doas pacman-key --recv-key FBA220DFC880C036 --keyserver keyserver.ubuntu.com
+        doas pacman-key --lsign-key FBA220DFC880C036
+        doas pacman -U --noconfirm 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
+        if [[ $(cat /etc/pacman.conf |grep -c "chaotic-aur") -eq 0 ]] ;then
+            cp /etc/pacman.conf -t /tmp
+            echo '[chaotic-aur]' >>/tmp/pacman.conf
+            echo 'Include = /etc/pacman.d/chaotic-mirrorlist' >>/tmp/pacman.conf
+            doas cp    /etc/pacman.conf -T /etc/pacman.conf.orig
+            doas mv -f /tmp/pacman.conf -t /etc
+        fi
+        if [[ ! -x /usr/bin/paru ]] ;then
+            git clone https://aur.archlinux.org/paru-bin
+            cd ./paru-bin
+            makepkg -Ccsi
+            cd ..
+            rm -fr ./paru-bin
+            mkdir -p $HOME/.config/paru
+            cat << '__PARU__' >$HOME/.config/paru/paru.conf
+[options]
+BottomUp
+CleanAfter
+PgpFetch
+RemoveMake
+SortBy = popularity
+CompletionInterval = 3
+NoWarn = *
+SkipReview
+[bin]
+Sudo = /usr/bin/doas
+MFlags = ' -Cc  '
+__PARU__
+        fi
+    fi
+    doas pacman    -Sy &&
+    doas powerpill -Su &&
+    paru           -Su
+    return 0
+}
+
+alias chup=chaoup

@@ -1,0 +1,34 @@
+function hsv (){
+    local TT="$(mktemp)"
+    local SHAPE
+    local W="$(
+        mediainfo "$1" |tr -d " " |tee "$TT" |
+        grep Width |sed -e 's|Width:||g' -e 's|pixels||g'
+    )"
+    local H="$(
+        cat "$TT" |
+        grep Height |sed -e 's|Height:||g' -e 's|pixels||g'
+    )"
+
+    if   [[ "$W" -gt "$H" ]] ;then
+        SHAPE="horizontal"
+        KATACHI="yoko"
+    elif [[ "$W" -eq "$H" ]] ;then
+        SHAPE="square"
+        KATACHI="onaji"
+    elif [[ "$W" -lt "$H" ]] ;then
+        SHAPE="vertical"
+        KATACHI="tate"
+    else
+        rm "$TT"
+        return 99
+    fi
+    rm "$TT"
+    return 0
+}
+function tateyoko (){
+    hsv $*
+}
+export -f hsv
+export -f tateyoko
+

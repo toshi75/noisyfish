@@ -1,0 +1,7 @@
+function get-gui-editors (){
+    paru -S --needed \
+    gedit-{menubar,plugins-git,smart-home,panel-toggler} \
+    pluma{,-plugins} xed typora-free
+    return 0
+}
+

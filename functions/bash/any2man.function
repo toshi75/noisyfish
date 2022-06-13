@@ -1,0 +1,74 @@
+function any2man(){
+    if [[ $# -eq 0 ]] || [[ "$1" = "-h" || "$1" = "--help" ]] ;then
+        echo " Use as html2man: any2man /path/to/ManName.html ..."
+        echo " Use as   md2man: any2man /path/to/ManName.md   ..."
+        echo " Use as  url2man: any2man \"Name of Man\" \"URL\""
+        return 100
+    fi
+    ## depends #################
+    local CK=0
+    if ( ! type go-md2man &>/dev/null ) ;then
+        CK=$((CK+1))
+    fi
+    if ( ! type html2text &>/dev/null ) ;then
+        CK=$((CK+2))
+    fi
+    case "${CK}" in
+        1)  echo '  "pkg: go-md2man       ", Not found.'    ;;
+        2)  echo '  "pkg: python-html2text", Not found.'    ;;
+        3)  echo '  "pkg: go-md2man       ", Not found.'
+            echo '  "pkg: python-html2text", Not found.'    ;;
+    esac
+    [[ "$CK" -gt 0 ]] && return 99
+
+    ## start #################
+    cd "$(pwd)"
+    if [[ -f "$1" ]] ;then
+        local INPUT="FILE"
+    else
+        local INPUT="URL"
+    fi
+    case "$INPUT" in
+        FILE)
+            until [[ "$1" = "" ]] ;do
+                local  EXT="$(basename "$1" |sed -e 's|^.*\.||g')"
+                local NAME="$(basename "$1" |sed -e 's|\..*$||g')"
+                if   [[ "${EXT}" = "html" ]] ;then
+                    html2text "$1" >"/tmp/${NAME}.md"
+                    cat "/tmp/${NAME}.md" |
+                    go-md2man >"/tmp/${NAME}.1"
+                    gzip -c "/tmp/${NAME}.1" >"$(pwd)/${NAME}.1.gz"
+                elif [[ "${EXT}" = "md"   ]] ;then
+                    cat "$1" |go-md2man >"/tmp/${NAME}.1"
+                    gzip -c "/tmp/${NAME}.1" >"$(pwd)/${NAME}.1.gz"
+                fi
+                shift
+            done
+            ;;
+        URL)
+            until [[ "$2" = "" ]] ;do
+                if [[ "$(echo "$1" |grep -c ^http)" -eq 1 ]] ;then
+                    local _URL="$1"
+                    local NAME="$2"
+                else
+                    local NAME="$1"
+                    local _URL="$2"
+                fi
+                local TEMPHTML="/tmp/${NAME}.html"
+                local   TEMPMD="/tmp/${NAME}.md"
+                curl -#qkL "${_URL}"       >"${TEMPHTML}"
+                html2text "${TEMPHTML}"    >"${TEMPMD}"
+                cat "${TEMPMD}" |go-md2man >"/tmp/${NAME}.1"
+                cp "${NAME}.1" ./
+                gzip -c "/tmp/${NAME}.1" >"$(pwd)/${NAME}.1.gz"
+                mv "${TEMPHTML}" "${TEMPMD}" ./
+                echo "You can retry, Use ${1}.html and ${NAME}.md"
+                shift
+            done
+            ;;
+    esac
+    return 0
+}
+
+
+

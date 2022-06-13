@@ -1,0 +1,9 @@
+function mpvup (){
+    local DIR="$(pwd)"
+    cd "$HOME/dotfiles/apup/mpv-git"
+    makepkg -Ccsi
+    cd "$DIR"
+    return 0
+}
+
+

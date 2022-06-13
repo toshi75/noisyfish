@@ -1,0 +1,10 @@
+function rmthumb (){
+    if ( ! which lms &>/dev/null ) ;then
+        yay -S --noconfirm lumins
+    fi
+    lms rm /var/$USER/cache/thumbnails/fail   2>/dev/null
+    lms rm /var/$USER/cache/thumbnails/large  2>/dev/null
+    lms rm /var/$USER/cache/thumbnails/normal 2>/dev/null
+    return 0
+}
+

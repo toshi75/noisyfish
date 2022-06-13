@@ -1,0 +1,9 @@
+function nobeep (){
+    if [[ ! -f "/etc/modprobe.d/nobeep.conf" ]] ;then
+        sudo rmmod pcspkr
+        echo "blacklist pcspkr" >"/tmp/nobeep.conf"
+        sudo mv "/tmp/nobeep.conf" "/etc/modprobe.d"
+    fi
+    return 0
+}
+

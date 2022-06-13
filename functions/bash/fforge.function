@@ -1,0 +1,8 @@
+function fforge (){
+    (
+        cd "$(dirname "$1")"
+        /usr/bin/fontforge "$1"
+    )
+    return 0
+}
+

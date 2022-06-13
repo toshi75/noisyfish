@@ -1,0 +1,7 @@
+function fontrm (){
+    doas mv -b "$@" -t /tmp ||
+    sudo mv -b "$@" -t /tmp
+    fc-cache -r
+}
+alias frm='fontrm '
+

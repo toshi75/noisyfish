@@ -1,0 +1,43 @@
+function ss (){
+    local WD="$(mktemp -d)"
+    trap 'rm -fr $WD' 0 1 2 3 15
+    {   case $# in
+            0)  xsel -bo |
+                while read i ;do
+                    echo "$i"
+                done    ;;
+            *)  until [[ "$1" = "" ]] ;do
+                    echo "$1"
+                    shift
+                done    ;;
+        esac
+    } >"$WD"/WORDS.txt
+
+    locate -bei "$(cat "$WD"/WORDS.txt |sed -n '1p')" |
+    grep -e mp4$ -e mkv$ -e avi$ \
+         -e flv$ -e wmv$ -e iso$ -e m4v$ >"$WD"/LIST.1
+    [[ ! -f "$WD"/LIST.1 ]] && return 99
+    if [[ $(cat "$WD"/WORDS.txt |wc -l) -gt 1 ]] ;then
+        local N=1
+        local M=$((N+1))
+        while [[ $N -lt $(cat "$WD"/WORDS.txt |wc -l) ]] ;do
+            cat "$WD"/LIST.$N |
+            while read i ;do
+                if [[ "$(basename "$i" |
+                         grep "$(cat "$WD"/WORDS.txt |
+                                 sed -n "${M}p")")" != "" ]] ;then
+                    echo "$i" >>"$WD"/LIST.${M}
+                    [[ ! -f "$WD"/LIST.${M} ]] && break 2
+                    let N++
+                fi
+            done
+            let N++
+        done
+    fi
+    if [[ -f "$WD"/LIST.$(cat "$WD"/WORDS.txt |wc -l) ]] ;then
+        cat "$WD"/LIST.$(cat "$WD"/WORDS.txt |wc -l)
+    else
+        return 99
+    fi
+    return 0
+}

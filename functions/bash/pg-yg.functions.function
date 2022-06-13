@@ -1,0 +1,21 @@
+function pg (){
+    if ( ! which paru &>/dev/null ) ;then
+        echo "/usr/bin/paru not found."
+        return 99
+    else
+        case $# in
+            0)  xsel -bo |awk 4 |
+                while read i ;do
+                    paru -G "$i"
+                done    ;;
+            *)  until [[ "$1" = "" ]] ;do
+                    paru -G "$1"
+                    shift
+                done    ;;
+        esac
+    fi
+    return 0
+}
+
+alias yg='pg'
+

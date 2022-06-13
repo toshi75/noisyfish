@@ -1,0 +1,26 @@
+function ref (){
+    if [[ -r "$(realpath "$1")" ]] ;then
+        cat "$(realpath "$1")" |xsel -bi
+    else
+        TT="$(mktemp)"
+        {   find $HOME/dotfiles/bin \
+                 -type f -iname "$(basename "$1")"
+            find $HOME/dotfiles/bash/functions.d \
+                 -type f -iname "$(basename "$1").function"
+            find $HOME/dotfiles/bash/functions.d \
+                 -type f -iname "$(basename "$1").functions"
+        }   >"$TT"
+        case "$(cat "$TT" |wc -l)" in
+            0)  echo "\"$1\" not found."
+                \rm "$TT"
+                return 99   ;;
+            1)  echo "$(cat "$TT") found."
+                cat "$(cat "$TT")" |xsel -bi    ;;
+            *)  echo "$(cat "$TT" |wc -l) \"$1\" found."
+                cat "$TT"
+                \rm "$TT"
+                return 99   ;;
+        esac
+    fi
+}
+

@@ -1,0 +1,958 @@
+crawler (){
+    mkdir -p "$(pwd)/gallery-dl"
+    if [[ ! -f /usr/share/pixmaps/folder-gallery-dl.svg ]] ;then
+        echo '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" version="1"><rect width="40" height="26" x="4" y="17" rx="2" ry="2" opacity=".2"/><path d="M4 34c0 1.108.892 2 2 2h36c1.108 0 2-.892 2-2V12c0-1.108-.892-2-2-2H22V8c0-1.108-.892-2-2-2H6c-1.108 0-2 .892-2 2" fill="#214b7d"/><rect width="40" height="26" x="4" y="15" rx="2" ry="2" opacity=".2"/><rect width="36" height="16" x="6" y="13" rx="2" ry="2" fill="#e4e4e4"/><rect width="40" height="26" x="4" y="16" rx="2" ry="2" fill="#f90"/><path d="M6 6c-1.108 0-2 .892-2 2v1c0-1.108.892-2 2-2h14c1.108 0 2 .892 2 2V8c0-1.108-.892-2-2-2zm16 4v1h20c1.108 0 2 .892 2 2v-1c0-1.108-.892-2-2-2z" opacity=".1" fill="#fff"/><path d="M27.717 38.07c-1.203-.33-2.206-1.264-2.607-2.18-.2-.392-.2-.622-.2-1.41-.2-1.33.2-1.791 1.203-2.723 1.002-.87 1.403-1.073 2.807-1.132 1.002-.036 1.203-.017 1.804.198.602.21.802.316 1.604.926 1.003.87 1.203 1.326 1.203 2.54 0 .624 0 .939-.2 1.279-.402 1.27-1.404 2.113-2.807 2.54-.802.245-2.005.228-2.807-.037zm3.809-2.44c0-.029-.4-.044-.802-.037-.4.008-.802-.003-.802-.024-.2-.029-.2-.488-.2-1.904v-1.866h-1.204v3.809l-.802-.016c-.4-.01-.802.014-.802.049 0 .036.602.508 1.203 1.05l1.003.984 1.203-.997c.601-.55 1.203-1.02 1.203-1.049zm-18.044-6.09v-7.118h20.049v8.987l-.4-.386c-.603-.517-1.003-.78-1.605-1.007-.601-.24-1.804-.434-2.406-.434-.2 0-.601-.03-.601-.065s.802-.792 2.005-1.682l1.804-1.618V23.53H14.685v9.803h3.809l2.807-2.43c1.404-1.336 2.807-2.429 2.807-2.429s.602.406 1.203.902l1.002.902-.2.142c-.602.283-1.203.834-1.604 1.31-.2.267-.4.507-.4.534 0 .026 0 .21-.2.41-.201.435-.401 1.222-.401 1.776 0 .504.4 1.534.601 1.866v.295c0 .025-2.406.046-5.212.046h-5.414zm4.41-1.15c-.2-.037-.4-.177-.601-.311-.802-.59-.802-1.239-.602-1.9.2-.512.4-.677 1.003-.902 1.604-.615 3.208.67 2.606 2.07-.4.854-1.203 1.27-2.406 1.043z" fill="#214b7d"/></svg>' >/tmp/folder-gallery-dl.svg
+        doas mv /tmp/folder-gallery-dl.svg -t /usr/share/pixmaps
+    fi
+    gio set -t string "$(pwd)/gallery-dl" metadata::custom-icon "file:///usr/share/pixmaps/folder-gallery-dl.svg"
+    cd "$(pwd)/gallery-dl"
+    echo "$1" >./crawler-$(date '+%Y%m%d-%H%M%S').txt
+        #  --user-agent='Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2725.0 Safari/537.36' \
+
+        #ダウンロードする拡張子をコンマ区切りで指定する
+        #  -A,  --accept="*.jpg,*.jpeg,*.mp4,*.png,*.gif"
+        #ダウンロードしない拡張子をコンマ区切りで指定する
+        #  -R,  --reject="*.html,*css,*.js,*.xml,*.tmp,feed,*woff,*woff2"
+        # ex) -A "*.css*,*.js*,*.png,*.jpg,*.gif" \
+
+    wget --quiet \
+         –no-parent \
+         --show-progress \
+         --mirror \
+         --reject="*.html,*css,*.js,*.xml,*.tmp,feed,*woff,*woff2" \
+         --recursive \
+         --execute robots=off \
+         --user-agent=\'$(youtube-dl --dump-user-agent)\' \
+         --timestamping \
+         --page-requisites \
+         --html-extension \
+         --restrict-file-names=windows \
+         --random-wait \
+         --convert-links \
+         –adjust-extension \
+         --domains "$(echo "$1" |sed -e 's|htt.*:\/\/||g' -e 's|\/.*$||g')" \
+         "$(echo "$1" |sed -e 's|htt.*:\/\/||g' -e 's|\/.*$||g')"
+    cd ..
+}
+
+crawler2 (){
+    mkdir -p "$(pwd)/gallery-dl"
+    if [[ ! -f /usr/share/pixmaps/folder-gallery-dl.svg ]] ;then
+        echo '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" version="1"><rect width="40" height="26" x="4" y="17" rx="2" ry="2" opacity=".2"/><path d="M4 34c0 1.108.892 2 2 2h36c1.108 0 2-.892 2-2V12c0-1.108-.892-2-2-2H22V8c0-1.108-.892-2-2-2H6c-1.108 0-2 .892-2 2" fill="#214b7d"/><rect width="40" height="26" x="4" y="15" rx="2" ry="2" opacity=".2"/><rect width="36" height="16" x="6" y="13" rx="2" ry="2" fill="#e4e4e4"/><rect width="40" height="26" x="4" y="16" rx="2" ry="2" fill="#f90"/><path d="M6 6c-1.108 0-2 .892-2 2v1c0-1.108.892-2 2-2h14c1.108 0 2 .892 2 2V8c0-1.108-.892-2-2-2zm16 4v1h20c1.108 0 2 .892 2 2v-1c0-1.108-.892-2-2-2z" opacity=".1" fill="#fff"/><path d="M27.717 38.07c-1.203-.33-2.206-1.264-2.607-2.18-.2-.392-.2-.622-.2-1.41-.2-1.33.2-1.791 1.203-2.723 1.002-.87 1.403-1.073 2.807-1.132 1.002-.036 1.203-.017 1.804.198.602.21.802.316 1.604.926 1.003.87 1.203 1.326 1.203 2.54 0 .624 0 .939-.2 1.279-.402 1.27-1.404 2.113-2.807 2.54-.802.245-2.005.228-2.807-.037zm3.809-2.44c0-.029-.4-.044-.802-.037-.4.008-.802-.003-.802-.024-.2-.029-.2-.488-.2-1.904v-1.866h-1.204v3.809l-.802-.016c-.4-.01-.802.014-.802.049 0 .036.602.508 1.203 1.05l1.003.984 1.203-.997c.601-.55 1.203-1.02 1.203-1.049zm-18.044-6.09v-7.118h20.049v8.987l-.4-.386c-.603-.517-1.003-.78-1.605-1.007-.601-.24-1.804-.434-2.406-.434-.2 0-.601-.03-.601-.065s.802-.792 2.005-1.682l1.804-1.618V23.53H14.685v9.803h3.809l2.807-2.43c1.404-1.336 2.807-2.429 2.807-2.429s.602.406 1.203.902l1.002.902-.2.142c-.602.283-1.203.834-1.604 1.31-.2.267-.4.507-.4.534 0 .026 0 .21-.2.41-.201.435-.401 1.222-.401 1.776 0 .504.4 1.534.601 1.866v.295c0 .025-2.406.046-5.212.046h-5.414zm4.41-1.15c-.2-.037-.4-.177-.601-.311-.802-.59-.802-1.239-.602-1.9.2-.512.4-.677 1.003-.902 1.604-.615 3.208.67 2.606 2.07-.4.854-1.203 1.27-2.406 1.043z" fill="#214b7d"/></svg>' >/tmp/folder-gallery-dl.svg
+        doas mv /tmp/folder-gallery-dl.svg -t /usr/share/pixmaps
+    fi
+    gio set -t string "$(pwd)/gallery-dl" metadata::custom-icon "file:///usr/share/pixmaps/folder-gallery-dl.svg"
+    cd "$(pwd)/gallery-dl"
+    echo "$1" >./crawler-$(date '+%Y%m%d-%H%M%S').txt
+    wget2 --no-clobber \
+          --mirror \
+          --page-requisites \
+          --adjust-extension \
+          -R "*.html,*css,*.js,*.xml,*.tmp,feed,*woff,*woff2" \
+          --no-parent \
+          --convert-links \
+          --header="Accept: text/html" \
+          --execute robots=off \
+ --user-agent='Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2725.0 Safari/537.36' \
+          --max-threads 5 \
+          --accept-regex '(^[^\?]+$)|(^.*\?page.*$)' \
+          --filter-urls \
+          "$(echo "$1" |sed -e 's|htt.*:\/\/||g' -e 's|\/.*$||g')"
+    cd ..
+}
+
+#GNU Wget 1.21.2.16-f354-dirty, 非対話的ネットワーク転送ソフト
+#使い方: wget [オプション]... [URL]...
+
+#長いオプションで不可欠な引数は短いオプションでも不可欠です。
+
+#スタートアップ:
+#  -V,  --version                   バージョン情報を表示して終了する
+#  -h,  --help                      このヘルプを表示する
+#  -b,  --background                スタート後にバックグラウンドに移行する
+#  -e,  --execute=COMMAND           `.wgetrc'形式のコマンドを実行する
+
+#ログと入力ファイル:
+#  -o,  --output-file=FILE          ログを FILE に出力する
+#  -a,  --append-output=FILE        メッセージを FILE に追記する
+#  -d,  --debug                     デバッグ情報を表示する
+#  -q,  --quiet                     何も出力しない
+#  -v,  --verbose                   冗長な出力をする (デフォルト)
+#  -nv, --no-verbose                冗長ではなくする
+#       --report-speed=TYPE         帯域幅を TYPE で出力します。TYPE は 'bits' が指定できます。
+#  -i,  --input-file=FILE           FILE の中に指定された URL をダウンロードする
+#  -F,  --force-html                入力ファイルを HTML として扱う
+#  -B,  --base=URL                  HTML で入力されたファイル(-i -F)のリンクを
+#                                   指定した URL の相対 URL として扱う
+#       --config=FILE               設定ファイルを指定する
+#       --no-config                 設定ファイルを読みこまない
+#       --rejected-log=FILE         拒否された理由をログ FILE に保存する
+
+#ダウンロード:
+#  -t,  --tries=NUMBER              リトライ回数の上限を指定 (0 は無制限).
+#       --retry-connrefused         接続を拒否されてもリトライする
+#       --retry-on-http-error=ERRORS    コンマ区切りで指定したHTTPのエラーの場合リトライする
+#  -O,  --output-document=FILE      FILE に文書を書きこむ
+#  -nc, --no-clobber                存在しているファイルをダウンロードで上書きしない
+#       --no-netrc                  .netrc から認証情報を取得しない
+#  -c,  --continue                  部分的にダウンロードしたファイルの続きから始める
+#       --start-pos=OFFSET          OFFSET からダウンロードを開始する
+#       --progress=TYPE             進行表示ゲージの種類を TYPE に指定する
+#       --show-progress             どのモードでも進捗バーを表示する
+#  -N,  --timestamping              ローカルにあるファイルよりも新しいファイルだけ取得する
+#       --no-if-modified-since      タイムスタンプモードの時に、
+#                                     if-modified-since get リクエストを使わない
+#  --no-use-server-timestamps       ローカル側のファイルのタイムスタンプに
+#                                   サーバのものを使わない
+#  -S,  --server-response           サーバの応答を表示する
+#       --spider                    何もダウンロードしない
+#  -T,  --timeout=SECONDS           全てのタイムアウトを SECONDS 秒に設定する
+#       --dns-timeout=SECS          DNS 問い合わせのタイムアウトを SECS 秒に設定する
+#       --connect-timeout=SECS      接続タイムアウトを SECS 秒に設定する
+#       --read-timeout=SECS         読み込みタイムアウトを SECS 秒に設定する
+#  -w,  --wait=SECONDS              ダウンロード毎に SECONDS 秒待つ
+#                                     (2つ以上のURLを取得時のみ)
+#       --waitretry=SECONDS         リトライ毎に 1〜SECONDS 秒待つ
+#                                     (2つ以上のURLを取得時のみ)
+#       --random-wait               ダウンロード毎に 0.5*WAIT〜1.5*WAIT 秒待つ
+#                                     (2つ以上のURLを取得時のみ)
+#       --no-proxy                  プロクシを使わない
+#  -Q,  --quota=NUMBER              ダウンロードするバイト数の上限を指定する
+#       --bind-address=ADDRESS      ローカルアドレスとして ADDRESS (ホスト名か IP) を使う
+#       --limit-rate=RATE           ダウンロード速度を RATE に制限する
+#       --no-dns-cache              DNS の問い合わせ結果をキャッシュしない
+#       --restrict-file-names=OS    OS が許しているファイル名に制限する
+#       --ignore-case               ファイル名/ディレクトリ名の比較で大文字小文字を無視する
+#  -4,  --inet4-only                IPv4 だけを使う
+#  -6,  --inet6-only                IPv6 だけを使う
+#       --prefer-family=FAMILY      指定したファミリ(IPv6, IPv4, none)で最初に接続する
+#       --user=USER                 ftp, http のユーザ名を指定する
+#       --password=PASS             ftp, http のパスワードを指定する
+#       --ask-password              パスワードを別途入力する
+#       --use-askpass=COMMAND       認証情報(ユーザ名とパスワード)を取得するハンドラを指定します。
+#                                     COMMAND が指定されない場合は、
+#                                     環境変数 WGET_ASKPASS か SSH_ASKPASS が
+#                                     使われます。
+#       --no-iri                    IRI サポートを使わない
+#       --local-encoding=ENC        指定した ENC を IRI のローカルエンコーディングにする
+#       --remote-encoding=ENC       指定した ENC をデフォルトのリモートエンコーディングにする
+#       --unlink                    上書きする前にファイルを削除する
+#       --xattr                     拡張ファイル属性へのメタデータ保存を有効にする
+
+#ディレクトリ:
+#  -nd, --no-directories            ディレクトリを作らない
+#  -x,  --force-directories         ディレクトリを強制的に作る
+#  -nH, --no-host-directories       ホスト名のディレクトリを作らない
+#       --protocol-directories      プロトコル名のディレクトリを作る
+#  -P,  --directory-prefix=PREFIX   ファイルを PREFIX/ 以下に保存する
+#       --cut-dirs=NUMBER           リモートディレクトリ名の NUMBER 階層分を無視する
+
+#HTTP オプション:
+#       --http-user=USER            http ユーザ名として USER を使う
+#       --http-password=PASS        http パスワードとして PASS を使う
+#       --no-cache                  サーバがキャッシュしたデータを許可しない
+#       --default-page=NAME         デフォルトのページ名を NAME に変更します
+#                                   通常は `index.html' です
+#  -E,  --adjust-extension          HTML/CSS 文書は適切な拡張子で保存する
+#       --ignore-length             `Content-Length' ヘッダを無視する
+#       --header=STRING             送信するヘッダに STRING を追加する
+#       --compression=TYPE          圧縮アルゴリズムの指定: autoかgzipかnone(デフォルトはnone)
+#       --max-redirect              ページで許可する最大転送回数
+#       --proxy-user=USER           プロクシユーザ名として USER を使う
+#       --proxy-password=PASS       プロクシパスワードとして PASS を使う
+#       --referer=URL               Referer を URL に設定する
+#       --save-headers              HTTP のヘッダをファイルに保存する
+#  -U,  --user-agent=AGENT          User-Agent として Wget/VERSION ではなく AGENT を使う
+#       --no-http-keep-alive        HTTP の keep-alive (持続的接続) 機能を使わない
+#       --no-cookies                クッキーを使わない
+#       --load-cookies=FILE         クッキーを FILE から読みこむ
+#       --save-cookies=FILE         クッキーを FILE に保存する
+#       --keep-session-cookies      セッションだけで用いるクッキーを保持する
+#       --post-data=STRING          POST メソッドを用いて STRING を送信する
+#       --post-file=FILE            POST メソッドを用いて FILE の中味を送信する
+#       --method=HTTPMethod         "HTTPMethod" をヘッダのメソッドとして使います
+#       --body-data=STRING          STRING をデータとして送る。--method を指定してください。
+#       --body-file=FILE            ファイルの中味を送る。--method を指定してください。
+#       --content-disposition       Content-Disposition ヘッダがあれば
+#                                   ローカルのファイル名として用いる (実験的)
+#       --content-on-error          サーバエラー時に受信した内容を出力する
+#       --auth-no-challenge         サーバからのチャレンジを待たずに、
+#                                   Basic認証の情報を送信します。
+
+#HTTPS (SSL/TLS) オプション:
+#       --secure-protocol=PR        choose secure protocol, one of auto, SSLv2,
+#                                     SSLv3, TLSv1, TLSv1_1, TLSv1_2, TLSv1_3 and PFS
+#       --https-only                安全な HTTPS のリンクだけたどる
+#       --no-check-certificate      サーバ証明書を検証しない
+#       --certificate=FILE          クライアント証明書として FILE を使う
+#       --certificate-type=TYPE     クライアント証明書の種類を TYPE (PEM, DER) に設定する
+#       --private-key=FILE          秘密鍵として FILE を使う
+#       --private-key-type=TYPE     秘密鍵の種類を TYPE (PEM, DER) に設定する
+#       --ca-certificate=FILE       CA 証明書として FILE を使う
+#       --ca-directory=DIR          CA のハッシュリストが保持されているディレクトリを指定する
+#       --crl-file=FILE             CRL ファイルを指定する
+#       --pinnedpubkey=FILE/HASHES  公開鍵 (PEM/DER) ファイル、もしくは、base64でエンコードした
+#                                   sha256ハッシュ値(sha256//で始まりセミコロン区切り)を指定して、
+#                                   相手を認証します。
+#       --random-file=FILE          SSL PRNG の初期化データに使うファイルを指定する
+
+#       --ciphers=STR           GnuTLSの優先度かOpenSSLの暗号リストを直接指定する
+#                                   注意して使ってください。--secure-protocol を上書きします。
+#                                   フォーマットや文法は SSL/TLS 実装に依存します。
+#HSTS オプション:
+#       --no-hsts                   HSTS を使わない
+#       --hsts-file                 HSTS データベースのパス (デフォルトを上書き)
+
+#FTP オプション:
+#       --ftp-user=USER             ftp ユーザとして USER を使う
+#       --ftp-password=PASS         ftp パスワードとして PASS を使う
+#       --no-remove-listing         `.listing' ファイルを削除しない
+#       --no-glob                   FTP ファイル名のグロブを無効にする
+#       --no-passive-ftp            "passive" 転送モードを使わない
+#       --preserve-permissions      リモートのファイルパーミッションを保存する
+#       --retr-symlinks             再帰取得中に、シンボリックリンクでリンクされた先のファイルを取得する
+
+#FTPS オプション:
+#       --ftps-implicit                 implicit FTPS を使う (デフォルトポートは 990)
+#       --ftps-resume-ssl               制御接続で開始した SSL/TLS セッションを
+#                                         データ接続で再開する
+#       --ftps-clear-data-connection    制御チャネルだけ暗号化する(データは平文になる)
+#       --ftps-fallback-to-ftp          サーバが FTPS に対応していない場合は FTP にする
+#WARC オプション:
+#       --warc-file=FILENAME        リクエスト/レスポンスデータを .warc.gz ファイルに保存する
+#       --warc-header=STRING        warcinfo record に STRING を追加する
+#       --warc-max-size=NUMBER      WARC ファイルのサイズの最大値を NUMBER に設定する
+#       --warc-cdx                  CDX インデックスファイルを書く
+#       --warc-dedup=FILENAME       指定した CDX ファイルに載っている record は保存しない
+#       --no-warc-compression       WARC ファイルを GZIP で圧縮しない
+#       --no-warc-digests           SHA1 ダイジェストを計算しない
+#       --no-warc-keep-log          WARC record にログファイルを保存しない
+#       --warc-tempdir=DIRECTORY    WARC 書込時の一時ファイルを置くディレクトリを指定する
+
+#再帰ダウンロード:
+#  -r,  --recursive                 再帰ダウンロードを行う
+#  -l,  --level=NUMBER              再帰時の階層の最大の深さを NUMBER に設定する (0 で無制限)
+#       --delete-after              ダウンロード終了後、ダウンロードしたファイルを削除する
+#  -k,  --convert-links             HTML や CSS 中のリンクをローカルを指すように変更する
+#       --convert-file-only         URLのファイル名部分だけ変換する (いわゆるbasename)
+#  --backups=N                      ファイルに書きこむ時に N ファイルのバックアップをローテーションさせる
+#  -K,  --backup-converted          リンク変換前のファイルを .orig として保存する
+#  -m,  --mirror                    -N -r -l 0 --no-remove-listing の省略形
+#  -p,  --page-requisites           HTML を表示するのに必要な全ての画像等も取得する
+#       --strict-comments           HTML 中のコメントの処理を厳密にする
+
+#再帰ダウンロード時のフィルタ:
+#  -A,  --accept=LIST               ダウンロードする拡張子をコンマ区切りで指定する
+#  -R,  --reject=LIST               ダウンロードしない拡張子をコンマ区切りで指定する
+#       --accept-regex=REGEX        許容する URL の正規表現を指定する
+#       --reject-regex=REGEX        拒否する URL の正規表現を指定する
+#       --regex-type=TYPE           正規表現のタイプ (posix|pcre)
+#  -D,  --domains=LIST              ダウンロードするドメインをコンマ区切りで指定する
+#       --exclude-domains=LIST      ダウンロードしないドメインをコンマ区切りで指定する
+#       --follow-ftp                HTML 文書中の FTP リンクも取得対象にする
+#       --follow-tags=LIST          取得対象にするタグ名をコンマ区切りで指定する
+#       --ignore-tags=LIST          取得対象にしないタグ名をコンマ区切りで指定する
+#  -H,  --span-hosts                再帰中に別のホストもダウンロード対象にする
+#  -L,  --relative                  相対リンクだけ取得対象にする
+#  -I,  --include-directories=LIST  取得対象にするディレクトリを指定する
+#  --trust-server-names             ファイル名としてリダイレクト先のURLの最後の部分を使う
+#  -X,  --exclude-directories=LIST  取得対象にしないディレクトリを指定する
+#  -np, --no-parent                 親ディレクトリを取得対象にしない
+
+
+#################################################################GNU Wget2 V2.0.0 - multithreaded metalink/file/website downloader
+: << '#__WGET'
+Usage: wget [options...] <url>...
+
+Startup:
+  -a  --append-output       File where messages are appended to, '-' for STDOUT
+  -b  --background          Go to background immediately after startup. If no
+                              output file is specified via the -o, output is redirected to wget-log
+  -B  --base                Base for relative URLs read from input-file
+                              or from command line
+      --config              Path to initialization file (default: ~/.config/wget/wget2rc)
+  -d  --debug               Print debugging messages.(default: off)
+  -e  --execute             Wget compatibility option, not needed for Wget
+      --force-atom          Treat input file as Atom Feed. (default: off) (NEW!)
+      --force-css           Treat input file as CSS. (default: off) (NEW!)
+  -F  --force-html          Treat input file as HTML. (default: off)
+      --force-metalink      Treat input file as Metalink. (default: off) (NEW!)
+      --force-rss           Treat input file as RSS Feed. (default: off) (NEW!)
+      --force-sitemap       Treat input file as Sitemap. (default: off) (NEW!)
+      --fsync-policy        Use fsync() to wait for data being written to
+                              the pysical layer. (default: off) (NEW!)
+  -h  --help                Print this help.
+      --hyperlink           Enable terminal hyperlink support
+      --input-encoding      Character encoding of the file contents read with
+                              --input-file. (default: local encoding)
+  -i  --input-file          File where URLs are read from, - for STDIN.
+      --local-db            Read or load databases
+  -o  --output-file         File where messages are printed to,
+                              '-' for STDOUT.
+  -q  --quiet               Print no messages except debugging messages.
+                              (default: off)
+      --stats-dns           Print DNS stats. (default: off)
+                              Additional format supported:
+                              --stats-dns=[FORMAT:]FILE
+      --stats-ocsp          Print OCSP stats. (default: off)
+                              Additional format supported:
+                              --stats-ocsp=[FORMAT:]FILE
+      --stats-server        Print server stats. (default: off)
+                              Additional format supported:
+                              --stats-server=[FORMAT:]FILE
+      --stats-site          Print site stats. (default: off)
+                              Additional format supported:
+                              --stats-site=[FORMAT:]FILE
+      --stats-tls           Print TLS stats. (default: off)
+                              Additional format supported:
+                              --stats-tls=[FORMAT:]FILE
+      --unlink              Remove files before clobbering. (default: off)
+  -v  --verbose             Print more messages. (default: on)
+  -V  --version             Display the version of Wget and exit.
+
+Download:
+  -A  --accept              Comma-separated list of file name suffixes or
+                              patterns.
+      --accept-regex        Regex matching accepted URLs.
+      --ask-password        Print prompt for password
+      --backups             Make backups instead of overwriting/increasing
+                              number. (default: 0)
+      --bind-address        Bind to sockets to local address.
+                              (default: automatic)
+      --bind-interface      Bind sockets to the input Network Interface.
+                              (default: automatic)
+      --body-data           Data to be sent in a request.
+      --body-file           File with data to be sent in a request.
+      --cache               Enabled using of server cache. (default: on)
+      --chunk-size          Download large files in multithreaded chunks.
+                              (default: 0 (=off)) Example:
+                              wget --chunk-size=1M
+      --clobber             Enable file clobbering. (default: on)
+      --connect-timeout     Connect timeout in seconds.
+      --content-on-error    Save response body even on error status.
+                              (default: off)
+  -c  --continue            Continue download for given files. (default: off)
+      --convert-file-only   Convert only filename part of embedded URLs.
+                              (default: off)
+  -k  --convert-links       Convert embedded URLs to local URLs.
+                              (default: off)
+      --cut-file-get-vars   Cut HTTP GET vars from file names. (default: off)
+      --cut-url-get-vars    Cut HTTP GET vars from URLs. (default: off)
+      --delete-after        Don't save downloaded files. (default: off)
+      --dns-cache           Caching of domain name lookups. (default: on)
+      --dns-cache-preload   File to be used to preload the DNS cache.
+                              Format is like /etc/hosts (IP<whitespace>hostname).
+      --dns-timeout         DNS lookup timeout in seconds.
+  -D  --domains             Comma-separated list of domains to follow.
+      --download-attr       Recognize HTML5 download attributes.
+                              'strippath' strips the path to be more secure.
+'usepath' uses the path as is (this can be extremely dangerous !).
+(default: strippath)
+  -X  --exclude-directories
+                            Comma-separated list of directories NOT to download.
+                              Wildcards are allowed.
+      --exclude-domains     Comma-separated list of domains NOT to follow.
+      --filter-mime-type    Specify a list of mime types to be saved or ignored
+      --filter-urls         Apply the accept and reject filters on the URL
+                              before starting a download. (default: off)
+      --follow-tags         Scan additional tag/attributes for URLs,
+                              e.g. --follow-tags="img/data-500px,img/data-hires
+      --force-progress      Force progress bar.
+                              (default: off)
+      --http2-request-window
+                            Max. number of parallel streams per HTTP/2
+                              connection. (default: 30)
+      --if-modified-since   Do not send If-Modified-Since header in -N mode.
+Send preliminary HEAD request instead. This has only
+                              effect in -N mode.
+      --ignore-case         Ignore case when matching files. (default: off)
+      --ignore-length       Ignore content-length header field
+                              (default: off)
+      --ignore-tags         Ignore tag/attributes for URL scanning,
+                              e.g. --ignore-tags="img,a/href
+  -I  --include-directories
+                            Comma-separated list of directories TO download.
+                              Wildcards are allowed.
+  -4  --inet4-only          Use IPv4 connections only. (default: off)
+  -6  --inet6-only          Use IPv6 connections only. (default: off)
+      --iri                 Wget dummy option, you can't switch off
+                              international support
+      --keep-extension      If file exists: Use pattern 'basename_N.ext'
+                              instead of 'filename.N'. (default: off)
+  -l  --level               Maximum recursion depth. (default: 5)
+      --local-encoding      Character encoding of environment and filenames.
+      --max-redirect        Max. number of redirections to follow.
+                              (default: 20)
+      --max-threads         Max. concurrent download threads.
+                              (default: 5) (NEW!)
+  -m  --mirror              Turn on mirroring options -r -N -l inf
+      --netrc               Load credentials from ~/.netrc if not given.
+                              (default: on)
+  -O  --output-document     File where downloaded content is written to,
+                              '-O'  for STDOUT.
+  -p  --page-requisites     Download all necessary files to display a
+                              HTML page
+      --parent              Ascend above parent directory. (default: on)
+      --password            Password for Authentication.
+                              (default: empty password)
+      --post-data           Data to be sent in a POST request.
+      --post-file           File with data to be sent in a POST request.
+      --prefer-family       Prefer IPv4 or IPv6. (default: none)
+      --progress            Type of progress bar (bar, none).
+                              (default: none)
+      --proxy               Enable support for *_proxy environment variables.
+                              (default: on)
+      --random-wait         Wait 0.5 up to 1.5*<--wait> seconds between
+                              downloads (per thread). (default: off)
+      --read-timeout        Read and write timeout in seconds.
+  -r  --recursive           Recursive download. (default: off)
+      --regex-type          Regular expression type. Possible types are
+                              posix or pcre. (default: posix)
+  -R  --reject              Comma-separated list of file name suffixes or
+                              patterns.
+      --reject-regex        Regex matching rejected URLs.
+      --remote-encoding     Character encoding of remote files
+                              (if not specified in Content-Type HTTP header
+                              or in document itself)
+      --report-speed        Output bandwidth as TYPE. TYPE can be bytes
+                              or bits. --progress MUST be used.
+      --restrict-file-names
+                            unix, windows, nocontrol, ascii, lowercase,
+                              uppercase, none
+      --retry-on-http-error
+                            Specify a list of http statuses in which the download will be retried
+      --robots              Respect robots.txt standard for recursive
+                              downloads. (default: on)
+      --save-content-on     Specify a list of response codes that requires it's
+                              response body to be saved on error status
+  -S  --server-response     Print the server response headers. (default: off)
+  -H  --span-hosts          Span hosts that were not given on the
+                              command line. (default: off)
+      --spider              Enable web spider mode. (default: off)
+      --start-pos           Start downloading at zero-based position, 0 = option disabled. (default: 0)
+      --strict-comments     A dummy option. Parsing always works non-strict.
+      --tcp-fastopen        Enable TCP Fast Open (TFO). (default: on)
+  -T  --timeout             General network timeout in seconds.
+  -N  --timestamping        Just retrieve younger files than the local ones.
+                              (default: off)
+  -t  --tries               Number of tries for each download. (default 20)
+      --trust-server-names  On redirection use the server's filename.
+                              (default: off)
+      --use-askpass         Prompt for a user and password using
+                              the specified command.
+      --use-server-timestamps
+                            Set local file's timestamp to server's timestamp.
+                              (default: on)
+      --user                Username for Authentication.
+                              (default: empty username)
+  -w  --wait                Wait number of seconds between downloads
+                              (per thread). (default: 0)
+      --waitretry           Wait up to number of seconds after error
+                              (per thread). (default: 10)
+      --xattr               Save extended file attributes. (default: off)
+
+HTTP related options:
+  -E  --adjust-extension    Append extension to saved file (.html or .css).
+                              (default: off)
+      --auth-no-challenge   send Basic HTTP Authentication before challenge
+  -K  --backup-converted    When converting, keep the original file with
+                              a .orig suffix. (default: off)
+      --compression         Customize Accept-Encoding with
+                              identity, gzip, deflate, xz, lzma, br, bzip2, zstd, lzip
+                              and any combination of it
+                              no-compression means no Accept-Encoding
+      --content-disposition
+                            Take filename from Content-Disposition.
+                              (default: off)
+      --cookie-suffixes     Load public suffixes from file.
+                              They prevent 'supercookie' vulnerabilities.
+                              See https://publicsuffix.org/ for details.
+      --cookies             Enable use of cookies. (default: on)
+      --default-http-port   Set default port for HTTP. (default: 80)
+      --default-https-port  Set default port for HTTPS. (default: 443)
+      --default-page        Default file name. (default: index.html)
+      --header              Insert input string as a HTTP header in
+                              all requests
+      --html-extension      Obsoleted by --adjust-extension
+      --http-keep-alive     Keep connection open for further requests.
+                              (default: on)
+      --http-password       Password for HTTP Authentication.
+                              (default: empty password)
+      --http-proxy          Set HTTP proxy/proxies, overriding environment
+                              variables. Use comma to separate proxies.
+      --http-proxy-password
+                            Password for HTTP Proxy Authentication.
+                              (default: empty password)
+      --http-proxy-user     Username for HTTP Proxy Authentication.
+                              (default: empty username)
+      --http-user           Username for HTTP Authentication.
+                              (default: empty username)
+      --keep-session-cookies
+                            Also save session cookies. (default: off)
+      --limit-rate          Limit rate of download per second, 0 = no limit. (default: 0)
+      --load-cookies        Load cookies from file.
+      --metalink            Follow a metalink file instead of storing it
+                              (default: on)
+      --method              HTTP method to use for request.
+      --netrc-file          Set file for login/password to use instead of
+                              ~/.netrc. (default: ~/.netrc)
+  -Q  --quota               Download quota, 0 = no quota. (default: 0)
+      --referer             Include Referer: url in HTTP request.
+                              (default: off)
+      --retry-connrefused   Consider "connection refused" a transient error.
+                               (default: off)
+      --save-cookies        Save cookies to file.
+      --save-headers        Save the response headers in front of the response
+                              data. (default: off)
+  -U  --user-agent          HTTP User Agent string.
+                              (default: wget)
+
+HTTPS (SSL/TLS) related options:
+      --ca-certificate      File with bundle of PEM CA certificates.
+      --ca-directory        Directory with PEM CA certificates.
+      --certificate         File with client certificate.
+      --certificate-type    Certificate type: PEM or DER (known as ASN1).
+                              (default: PEM)
+      --check-certificate   Check the server's certificate. (default: on)
+      --check-hostname      Check the server's certificate's hostname.
+                              (default: on)
+      --crl-file            File with PEM CRL certificates.
+      --egd-file            File to be used as socket for random data from
+                              Entropy Gathering Daemon.
+      --hpkp                Use HTTP Public Key Pinning (HPKP). (default: on)
+      --hpkp-file           Set file for storing HPKP data
+                              (default: ~/.wget-hpkp)
+      --hsts                Use HTTP Strict Transport Security (HSTS).
+                              (default: on)
+      --hsts-file           Set file for HSTS caching. (default: ~/.wget-hsts)
+      --hsts-preload        Use HTTP Strict Transport Security (HSTS).
+                              [Not built with libhsts, so not functional]
+      --hsts-preload-file   Set name for the HSTS Preload file (DAFSA format).
+                              [Not built with libhsts, so not functional]
+      --http2               Use HTTP/2 protocol if possible. (default: on)
+      --http2-only          Only use HTTP/2 protocol, error if server doesn't offer it. (default: off)
+      --https-enforce       Use secure HTTPS instead of HTTP. Legal types are
+                              'hard', 'soft' and 'none'.
+                              If --https-only is enabled,
+                              this option has no effect. (default: none)
+      --https-only          Do not follow non-secure URLs. (default: off).
+      --https-proxy         Set HTTPS proxy/proxies, overriding environment
+                              variables. Use comma to separate proxies.
+      --ocsp                Use OCSP server access to verify server's
+                              certificate. (default: on)
+      --ocsp-date           Check if OCSP response date is too old.
+                              (default: on)
+      --ocsp-file           Set file for OCSP chaching.
+                              (default: ~/.wget-ocsp)
+      --ocsp-nonce          Allow nonce checking when verifying OCSP
+                              response. (default: on)
+      --ocsp-server         Set OCSP server address.
+                              (default: OCSP server given in certificate)
+      --ocsp-stapling       Use OCSP stapling to verify the server's
+                              certificate. (default: on)
+      --private-key         File with private key.
+      --private-key-type    Type of the private key (PEM or DER).
+                              (default: PEM)
+      --random-file         File to be used as source of random data.
+      --secure-protocol     Set protocol to be used (auto, SSLv3, TLSv1, TLSv1_1, TLSv1_2, TLS1_3, PFS).
+                              (default: auto). Or use GnuTLS priority
+                              strings, e.g. NORMAL:-VERS-SSL3.0:-RSA
+      --tls-false-start     Enable TLS False Start (needs GnuTLS 3.5+).
+                              (default: on)
+      --tls-resume          Enable TLS Session Resumption. (default: off)
+      --tls-session-file    Set file for TLS Session caching.
+                              (default: ~/.wget-session)
+
+Directory options:
+      --cut-dirs            Skip creating given number of directory
+                              components. (default: 0)
+      --directories         Create hierarchy of directories when retrieving
+                              recursively. (default: on)
+  -P  --directory-prefix    Set directory prefix.
+  -x  --force-directories   Create hierarchy of directories when not
+                              retrieving recursively. (default: off)
+      --host-directories    Create host directories when retrieving
+                              recursively. (default: on)
+      --protocol-directories
+                            Force creating protocol directories.
+                              (default: off)
+
+GPG related options:
+      --gnupg-homedir       Specify a directory to use as the GnuPG home
+                               directory. (default: gnupg default homedir)
+      --signature-extensions
+                            The extension of the signature file which should be
+                              downloaded. (default: sig)
+      --verify-save-failed  Save target files even when their signatures fail
+                              GPG validation. (default: off)
+  -s  --verify-sig          Download .sig file and verify. (default: off)
+
+Plugin options:
+      --list-plugins        Lists all the plugins in the plugin search paths.
+      --local-plugin        Loads a plugin with a given path.
+      --plugin              Load a plugin with a given name.
+      --plugin-dirs         Specify alternative directories to look
+                              for plugins, separated by ','
+      --plugin-help         Print help message for all loaded plugins
+      --plugin-opt          Forward an option to a loaded plugin.
+                              The option should be in format:
+                              <plugin_name>.<option>[=value]
+
+
+Example boolean option:
+ --quiet=no is the same as --no-quiet or --quiet=off or --quiet off
+Example string option:
+ --user-agent=SpecialAgent/1.3.5 or --user-agent "SpecialAgent/1.3.5"
+
+To reset string options use --[no-]option
+
+#__WGET
+##################################################################
+: << '#__WGET2'
+GNU Wget2 V2.0.0 - multithreaded metalink/file/website downloader
+
+Usage: wget [options...] <url>...
+
+Startup:
+  -a  --append-output       File where messages are appended to, '-' for STDOUT
+  -b  --background          Go to background immediately after startup. If no
+                              output file is specified via the -o, output is redirected to wget-log
+  -B  --base                Base for relative URLs read from input-file
+                              or from command line
+      --config              Path to initialization file (default: ~/.config/wget/wget2rc)
+  -d  --debug               Print debugging messages.(default: off)
+  -e  --execute             Wget compatibility option, not needed for Wget
+      --force-atom          Treat input file as Atom Feed. (default: off) (NEW!)
+      --force-css           Treat input file as CSS. (default: off) (NEW!)
+  -F  --force-html          Treat input file as HTML. (default: off)
+      --force-metalink      Treat input file as Metalink. (default: off) (NEW!)
+      --force-rss           Treat input file as RSS Feed. (default: off) (NEW!)
+      --force-sitemap       Treat input file as Sitemap. (default: off) (NEW!)
+      --fsync-policy        Use fsync() to wait for data being written to
+                              the pysical layer. (default: off) (NEW!)
+  -h  --help                Print this help.
+      --hyperlink           Enable terminal hyperlink support
+      --input-encoding      Character encoding of the file contents read with
+                              --input-file. (default: local encoding)
+  -i  --input-file          File where URLs are read from, - for STDIN.
+      --local-db            Read or load databases
+  -o  --output-file         File where messages are printed to,
+                              '-' for STDOUT.
+  -q  --quiet               Print no messages except debugging messages.
+                              (default: off)
+      --stats-dns           Print DNS stats. (default: off)
+                              Additional format supported:
+                              --stats-dns=[FORMAT:]FILE
+      --stats-ocsp          Print OCSP stats. (default: off)
+                              Additional format supported:
+                              --stats-ocsp=[FORMAT:]FILE
+      --stats-server        Print server stats. (default: off)
+                              Additional format supported:
+                              --stats-server=[FORMAT:]FILE
+      --stats-site          Print site stats. (default: off)
+                              Additional format supported:
+                              --stats-site=[FORMAT:]FILE
+      --stats-tls           Print TLS stats. (default: off)
+                              Additional format supported:
+                              --stats-tls=[FORMAT:]FILE
+      --unlink              Remove files before clobbering. (default: off)
+  -v  --verbose             Print more messages. (default: on)
+  -V  --version             Display the version of Wget and exit.
+
+Download:
+  -A  --accept              Comma-separated list of file name suffixes or
+                              patterns.
+      --accept-regex        Regex matching accepted URLs.
+      --ask-password        Print prompt for password
+      --backups             Make backups instead of overwriting/increasing
+                              number. (default: 0)
+      --bind-address        Bind to sockets to local address.
+                              (default: automatic)
+      --bind-interface      Bind sockets to the input Network Interface.
+                              (default: automatic)
+      --body-data           Data to be sent in a request.
+      --body-file           File with data to be sent in a request.
+      --cache               Enabled using of server cache. (default: on)
+      --chunk-size          Download large files in multithreaded chunks.
+                              (default: 0 (=off)) Example:
+                              wget --chunk-size=1M
+      --clobber             Enable file clobbering. (default: on)
+      --connect-timeout     Connect timeout in seconds.
+      --content-on-error    Save response body even on error status.
+                              (default: off)
+  -c  --continue            Continue download for given files. (default: off)
+      --convert-file-only   Convert only filename part of embedded URLs.
+                              (default: off)
+  -k  --convert-links       Convert embedded URLs to local URLs.
+                              (default: off)
+      --cut-file-get-vars   Cut HTTP GET vars from file names. (default: off)
+      --cut-url-get-vars    Cut HTTP GET vars from URLs. (default: off)
+      --delete-after        Don't save downloaded files. (default: off)
+      --dns-cache           Caching of domain name lookups. (default: on)
+      --dns-cache-preload   File to be used to preload the DNS cache.
+                              Format is like /etc/hosts (IP<whitespace>hostname).
+      --dns-timeout         DNS lookup timeout in seconds.
+  -D  --domains             Comma-separated list of domains to follow.
+      --download-attr       Recognize HTML5 download attributes.
+                              'strippath' strips the path to be more secure.
+'usepath' uses the path as is (this can be extremely dangerous !).
+(default: strippath)
+  -X  --exclude-directories
+                            Comma-separated list of directories NOT to download.
+                              Wildcards are allowed.
+      --exclude-domains     Comma-separated list of domains NOT to follow.
+      --filter-mime-type    Specify a list of mime types to be saved or ignored
+      --filter-urls         Apply the accept and reject filters on the URL
+                              before starting a download. (default: off)
+      --follow-tags         Scan additional tag/attributes for URLs,
+                              e.g. --follow-tags="img/data-500px,img/data-hires
+      --force-progress      Force progress bar.
+                              (default: off)
+      --http2-request-window
+                            Max. number of parallel streams per HTTP/2
+                              connection. (default: 30)
+      --if-modified-since   Do not send If-Modified-Since header in -N mode.
+Send preliminary HEAD request instead. This has only
+                              effect in -N mode.
+      --ignore-case         Ignore case when matching files. (default: off)
+      --ignore-length       Ignore content-length header field
+                              (default: off)
+      --ignore-tags         Ignore tag/attributes for URL scanning,
+                              e.g. --ignore-tags="img,a/href
+  -I  --include-directories
+                            Comma-separated list of directories TO download.
+                              Wildcards are allowed.
+  -4  --inet4-only          Use IPv4 connections only. (default: off)
+  -6  --inet6-only          Use IPv6 connections only. (default: off)
+      --iri                 Wget dummy option, you can't switch off
+                              international support
+      --keep-extension      If file exists: Use pattern 'basename_N.ext'
+                              instead of 'filename.N'. (default: off)
+  -l  --level               Maximum recursion depth. (default: 5)
+      --local-encoding      Character encoding of environment and filenames.
+      --max-redirect        Max. number of redirections to follow.
+                              (default: 20)
+      --max-threads         Max. concurrent download threads.
+                              (default: 5) (NEW!)
+  -m  --mirror              Turn on mirroring options -r -N -l inf
+      --netrc               Load credentials from ~/.netrc if not given.
+                              (default: on)
+  -O  --output-document     File where downloaded content is written to,
+                              '-O'  for STDOUT.
+  -p  --page-requisites     Download all necessary files to display a
+                              HTML page
+      --parent              Ascend above parent directory. (default: on)
+      --password            Password for Authentication.
+                              (default: empty password)
+      --post-data           Data to be sent in a POST request.
+      --post-file           File with data to be sent in a POST request.
+      --prefer-family       Prefer IPv4 or IPv6. (default: none)
+      --progress            Type of progress bar (bar, none).
+                              (default: none)
+      --proxy               Enable support for *_proxy environment variables.
+                              (default: on)
+      --random-wait         Wait 0.5 up to 1.5*<--wait> seconds between
+                              downloads (per thread). (default: off)
+      --read-timeout        Read and write timeout in seconds.
+  -r  --recursive           Recursive download. (default: off)
+      --regex-type          Regular expression type. Possible types are
+                              posix or pcre. (default: posix)
+  -R  --reject              Comma-separated list of file name suffixes or
+                              patterns.
+      --reject-regex        Regex matching rejected URLs.
+      --remote-encoding     Character encoding of remote files
+                              (if not specified in Content-Type HTTP header
+                              or in document itself)
+      --report-speed        Output bandwidth as TYPE. TYPE can be bytes
+                              or bits. --progress MUST be used.
+      --restrict-file-names
+                            unix, windows, nocontrol, ascii, lowercase,
+                              uppercase, none
+      --retry-on-http-error
+                            Specify a list of http statuses in which the download will be retried
+      --robots              Respect robots.txt standard for recursive
+                              downloads. (default: on)
+      --save-content-on     Specify a list of response codes that requires it's
+                              response body to be saved on error status
+  -S  --server-response     Print the server response headers. (default: off)
+  -H  --span-hosts          Span hosts that were not given on the
+                              command line. (default: off)
+      --spider              Enable web spider mode. (default: off)
+      --start-pos           Start downloading at zero-based position, 0 = option disabled. (default: 0)
+      --strict-comments     A dummy option. Parsing always works non-strict.
+      --tcp-fastopen        Enable TCP Fast Open (TFO). (default: on)
+  -T  --timeout             General network timeout in seconds.
+  -N  --timestamping        Just retrieve younger files than the local ones.
+                              (default: off)
+  -t  --tries               Number of tries for each download. (default 20)
+      --trust-server-names  On redirection use the server's filename.
+                              (default: off)
+      --use-askpass         Prompt for a user and password using
+                              the specified command.
+      --use-server-timestamps
+                            Set local file's timestamp to server's timestamp.
+                              (default: on)
+      --user                Username for Authentication.
+                              (default: empty username)
+  -w  --wait                Wait number of seconds between downloads
+                              (per thread). (default: 0)
+      --waitretry           Wait up to number of seconds after error
+                              (per thread). (default: 10)
+      --xattr               Save extended file attributes. (default: off)
+
+HTTP related options:
+  -E  --adjust-extension    Append extension to saved file (.html or .css).
+                              (default: off)
+      --auth-no-challenge   send Basic HTTP Authentication before challenge
+  -K  --backup-converted    When converting, keep the original file with
+                              a .orig suffix. (default: off)
+      --compression         Customize Accept-Encoding with
+                              identity, gzip, deflate, xz, lzma, br, bzip2, zstd, lzip
+                              and any combination of it
+                              no-compression means no Accept-Encoding
+      --content-disposition
+                            Take filename from Content-Disposition.
+                              (default: off)
+      --cookie-suffixes     Load public suffixes from file.
+                              They prevent 'supercookie' vulnerabilities.
+                              See https://publicsuffix.org/ for details.
+      --cookies             Enable use of cookies. (default: on)
+      --default-http-port   Set default port for HTTP. (default: 80)
+      --default-https-port  Set default port for HTTPS. (default: 443)
+      --default-page        Default file name. (default: index.html)
+      --header              Insert input string as a HTTP header in
+                              all requests
+      --html-extension      Obsoleted by --adjust-extension
+      --http-keep-alive     Keep connection open for further requests.
+                              (default: on)
+      --http-password       Password for HTTP Authentication.
+                              (default: empty password)
+      --http-proxy          Set HTTP proxy/proxies, overriding environment
+                              variables. Use comma to separate proxies.
+      --http-proxy-password
+                            Password for HTTP Proxy Authentication.
+                              (default: empty password)
+      --http-proxy-user     Username for HTTP Proxy Authentication.
+                              (default: empty username)
+      --http-user           Username for HTTP Authentication.
+                              (default: empty username)
+      --keep-session-cookies
+                            Also save session cookies. (default: off)
+      --limit-rate          Limit rate of download per second, 0 = no limit. (default: 0)
+      --load-cookies        Load cookies from file.
+      --metalink            Follow a metalink file instead of storing it
+                              (default: on)
+      --method              HTTP method to use for request.
+      --netrc-file          Set file for login/password to use instead of
+                              ~/.netrc. (default: ~/.netrc)
+  -Q  --quota               Download quota, 0 = no quota. (default: 0)
+      --referer             Include Referer: url in HTTP request.
+                              (default: off)
+      --retry-connrefused   Consider "connection refused" a transient error.
+                               (default: off)
+      --save-cookies        Save cookies to file.
+      --save-headers        Save the response headers in front of the response
+                              data. (default: off)
+  -U  --user-agent          HTTP User Agent string.
+                              (default: wget)
+
+HTTPS (SSL/TLS) related options:
+      --ca-certificate      File with bundle of PEM CA certificates.
+      --ca-directory        Directory with PEM CA certificates.
+      --certificate         File with client certificate.
+      --certificate-type    Certificate type: PEM or DER (known as ASN1).
+                              (default: PEM)
+      --check-certificate   Check the server's certificate. (default: on)
+      --check-hostname      Check the server's certificate's hostname.
+                              (default: on)
+      --crl-file            File with PEM CRL certificates.
+      --egd-file            File to be used as socket for random data from
+                              Entropy Gathering Daemon.
+      --hpkp                Use HTTP Public Key Pinning (HPKP). (default: on)
+      --hpkp-file           Set file for storing HPKP data
+                              (default: ~/.wget-hpkp)
+      --hsts                Use HTTP Strict Transport Security (HSTS).
+                              (default: on)
+      --hsts-file           Set file for HSTS caching. (default: ~/.wget-hsts)
+      --hsts-preload        Use HTTP Strict Transport Security (HSTS).
+                              [Not built with libhsts, so not functional]
+      --hsts-preload-file   Set name for the HSTS Preload file (DAFSA format).
+                              [Not built with libhsts, so not functional]
+      --http2               Use HTTP/2 protocol if possible. (default: on)
+      --http2-only          Only use HTTP/2 protocol, error if server doesn't offer it. (default: off)
+      --https-enforce       Use secure HTTPS instead of HTTP. Legal types are
+                              'hard', 'soft' and 'none'.
+                              If --https-only is enabled,
+                              this option has no effect. (default: none)
+      --https-only          Do not follow non-secure URLs. (default: off).
+      --https-proxy         Set HTTPS proxy/proxies, overriding environment
+                              variables. Use comma to separate proxies.
+      --ocsp                Use OCSP server access to verify server's
+                              certificate. (default: on)
+      --ocsp-date           Check if OCSP response date is too old.
+                              (default: on)
+      --ocsp-file           Set file for OCSP chaching.
+                              (default: ~/.wget-ocsp)
+      --ocsp-nonce          Allow nonce checking when verifying OCSP
+                              response. (default: on)
+      --ocsp-server         Set OCSP server address.
+                              (default: OCSP server given in certificate)
+      --ocsp-stapling       Use OCSP stapling to verify the server's
+                              certificate. (default: on)
+      --private-key         File with private key.
+      --private-key-type    Type of the private key (PEM or DER).
+                              (default: PEM)
+      --random-file         File to be used as source of random data.
+      --secure-protocol     Set protocol to be used (auto, SSLv3, TLSv1, TLSv1_1, TLSv1_2, TLS1_3, PFS).
+                              (default: auto). Or use GnuTLS priority
+                              strings, e.g. NORMAL:-VERS-SSL3.0:-RSA
+      --tls-false-start     Enable TLS False Start (needs GnuTLS 3.5+).
+                              (default: on)
+      --tls-resume          Enable TLS Session Resumption. (default: off)
+      --tls-session-file    Set file for TLS Session caching.
+                              (default: ~/.wget-session)
+
+Directory options:
+      --cut-dirs            Skip creating given number of directory
+                              components. (default: 0)
+      --directories         Create hierarchy of directories when retrieving
+                              recursively. (default: on)
+  -P  --directory-prefix    Set directory prefix.
+  -x  --force-directories   Create hierarchy of directories when not
+                              retrieving recursively. (default: off)
+      --host-directories    Create host directories when retrieving
+                              recursively. (default: on)
+      --protocol-directories
+                            Force creating protocol directories.
+                              (default: off)
+
+GPG related options:
+      --gnupg-homedir       Specify a directory to use as the GnuPG home
+                               directory. (default: gnupg default homedir)
+      --signature-extensions
+                            The extension of the signature file which should be
+                              downloaded. (default: sig)
+      --verify-save-failed  Save target files even when their signatures fail
+                              GPG validation. (default: off)
+  -s  --verify-sig          Download .sig file and verify. (default: off)
+
+Plugin options:
+      --list-plugins        Lists all the plugins in the plugin search paths.
+      --local-plugin        Loads a plugin with a given path.
+      --plugin              Load a plugin with a given name.
+      --plugin-dirs         Specify alternative directories to look
+                              for plugins, separated by ','
+      --plugin-help         Print help message for all loaded plugins
+      --plugin-opt          Forward an option to a loaded plugin.
+                              The option should be in format:
+                              <plugin_name>.<option>[=value]
+
+
+Example boolean option:
+ --quiet=no is the same as --no-quiet or --quiet=off or --quiet off
+Example string option:
+ --user-agent=SpecialAgent/1.3.5 or --user-agent "SpecialAgent/1.3.5"
+
+To reset string options use --[no-]option
+#__WGET2
+

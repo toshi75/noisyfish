@@ -1,0 +1,160 @@
+function ec (){
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+#  MA 02110-1301, USA.
+#
+    case "$#" in
+        1)
+            for i in {pluma,xed,gedit,nvim,vim,micro,nano,xdg-open} ;do
+                if ( type "$i" &>/dev/null ) ;then
+                    APP="$i"
+                    break
+                fi
+            done
+            if   [[ "$(type -t "$1")" = "file" ]] ;then
+                nohup "${APP}" "$(which "$1")" &>/dev/null &
+            elif [[ "$(type -t "$1")" = "function" ]] ;then
+                if [[ "$(cat "$HOME/.bash_aliases" |
+                         sed -e 's|#.*$||g' |
+                         grep -ci "function $1")" -eq 1 ]] ;then
+                    nohup "${APP}" "$HOME/.bash_aliases" &>/dev/null &
+                else
+                    for i in "$HOME"/dotfiles/bash/functions.d/*.function ;do
+                        if [[ "$(cat "$i" |
+                                 sed -e 's|#.*$||g' |
+                                 grep -ic "function $1")" -eq 1 ]] ;then
+                            nohup "${APP}" "$i" &>/dev/null &
+                        fi
+                    done
+                fi
+            elif [[ "$(type -t "$1")" = "alias" ]] ;then
+                if [[ "$(cat  "$HOME/.bash_aliases" |
+                         sed -e 's|#.*$||g' |
+                         grep -ci "alias $1=")" -eq 1 ]] ;then
+                    nohup "${APP}" "$HOME/.bash_aliases" &>/dev/null &
+                fi
+            fi
+            ;;
+        2)
+            if   [[ "$1" = "-c" || "$1" = "--copy" ]] ;then
+                if   ( which "$2" &>/dev/null ) ;then
+                    {   echo "# file: $(which "$2")"
+                        echo "#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#"
+                        cat  "$(which "$2")"
+                        echo ""
+                    }  |xsel -bi
+                    xsel -bo |xsel -ip
+                    echo "  \"$(which "$2")\" found."
+                    echo "  Path and Contents, Clipped to clipboard."
+                elif ( type "$2" &>/dev/null ) ;then
+                    case "$(type "$2" |wc -l)" in
+                        1)  {   echo -n "alias ${2}='"
+                                echo -n "$(type "$2" |sed -e 's|^.*`||g' -e "s|'.*$||g")"
+                                echo    "'"
+                            }  |xsel -bi
+                            xsel -bo |xsel -ip
+                            echo "  $(xsel -bo) found."
+                            echo "  Clipped to clipboard."
+                            ;;
+                        *)  {   type "$2" |sed '1d' |head -n1 |
+                                           sed -e 's|^|function |g' -e 's|)\s$|){|g'
+                                type "$2" |sed '1,3d' |sed -e 's|;$||g' -e 's|;$|;;|g'
+                            }  |xsel -bi
+                            xsel -bo |xsel -ip
+                            echo "  Function \"$2\" found."
+                            echo "  Clipped to clipboard."
+                            ;;
+                    esac
+                else
+                    echo "  \"$2\": 404 Not found."
+                fi
+            elif [[ "$1" = "-p" || "$1" = "--pluma" ]] ;then
+                nohup pluma    "$(which "$2")" &>/dev/null &
+            elif [[ "$1" = "-g" || "$1" = "--gedit" ]] ;then
+                nohup gedit    "$(which "$2")" &>/dev/null &
+            elif [[ "$1" = "-x" || "$1" = "--xed"   ]] ;then
+                nohup      xed "$(which "$2")" &>/dev/null &
+            else
+                nohup xdg-open "$(which "$2")" &>/dev/null &
+            fi
+            ;;
+    esac
+    return 0
+}
+
+###########################################
+
+function ecc (){
+    local TT="$(mktemp)"
+    local CLIP="xsel -bi"
+    {   case "$#" in
+            0)  xsel -bo |
+                while read i ;do
+                    echo "$i"
+                done
+                ;;
+            *)  until [[ "$1" = "" ]] ;do
+                    echo "$1"
+                    shift
+                done
+                ;;
+        esac
+    } >"$TT"
+    ARGS="$(cat "$TT" |wc -l)"
+    cat "$TT" |
+    while read i ;do
+        if   ( which "$i" &>/dev/null ) ;then
+            {   echo "# file: $(which "$i")"
+                echo "#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#"
+                cat  "$(which "$i")"
+                echo ""
+            }  |${CLIP}
+            echo "  \"$(which "$i")\" found."
+            echo "  Path and Contents, Clipped to clipboard."
+        elif ( type "$i" &>/dev/null ) ;then
+            case "$(type "$i" |wc -l)" in
+                1)  {   echo -n "alias ${2}='"
+                        echo -n "$(type "$i" |sed -e 's|^.*`||g' -e "s|'.*$||g")"
+                        echo    "'"
+                    }  |${CLIP}
+                    echo "  $(xsel -bo) found."
+                    echo "  Clipped to clipboard."
+                    ;;
+                *)  {   type "$i" |sed '1d' |head -n1 |
+                                   sed -e 's|^|function |g' -e 's|)\s$|){|g'
+                        type "$i" |sed '1,3d' |sed -e 's|;$||g' -e 's|;$|;;|g'
+                    }  |${CLIP}
+                    echo "  Function \"$i\" found."
+                    echo "  Clipped to clipboard."
+                    ;;
+            esac
+        else
+            echo "  \"$i\": 404 Not found."
+            if [[ "$ARGS" -gt 1 ]] ;then
+                {   echo "  \"$i\": 404 Not found."
+                } |${CLIP}
+            fi
+        fi
+        if [[ "$ARGS" -gt 1 ]] ;then
+            CLIP="xsel -abi"
+            {   echo ""
+                echo "#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#"
+                echo ""
+            } |${CLIP}
+        fi
+    done
+    /usr/bin/rm "$TT"
+    return 0
+}
+

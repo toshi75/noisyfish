@@ -1,0 +1,9 @@
+function 16x9 (){
+    ffmpeg -hide_banner -i "$1" -c copy -aspect 16:9 "$2"
+    return 0
+}
+
+function 4x3 (){
+    ffmpeg -hide_banner -i "$1" -c copy -aspect 4:3 "$2"
+    return 0
+}

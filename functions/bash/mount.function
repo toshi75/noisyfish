@@ -1,0 +1,6 @@
+function mount (){
+    # source /usr/share/start.up
+    doas mount -a || sudo mount -a
+    return 0
+}
+

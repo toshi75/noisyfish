@@ -1,0 +1,13 @@
+function fontfolder (){
+    nautilus -w /usr/share/fonts ||
+    xdg-open    /usr/share/fonts
+}
+alias     ffol='fontfolder '
+alias  ffolder='fontfolder '
+alias  fontfol='fontfolder '
+alias    fontf='fontfolder '
+alias      opf='fontfolder '
+alias   opfont='fontfolder '
+alias    openf='fontfolder '
+alias openfont='fontfolder '
+

@@ -1,0 +1,15 @@
+function get-archivers (){
+    paru -S --needed \
+        pigz \
+        pixz \
+        fastjar \
+        zip \
+        file-roller \
+        7-zip-full \
+        p7zip-zstd-codec \
+        cpio \
+        pax \
+        unrar
+    return 0
+}
+

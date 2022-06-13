@@ -1,0 +1,39 @@
+function ffup (){
+    local DIR="$(pwd)"
+    local USE=0
+    case $USE in
+        0)  cd "$HOME/dotfiles/apup/ffmpeg-nocuda-plus"
+            if ( ls -1A ./*.pkg.tar.zst &>/dev/null ) ;then
+                /usr/bin/rm ./*.pkg.tar.zst &>/dev/null
+            fi
+            makepkg --printsrcinfo >.SRCINFO
+            makepkg -Ccis --noconfirm
+            paru -S --rebuild --noconfirm mpv-pipewire
+            ;;
+        1)  cd "$HOME/dotfiles/apup/ffmpeg-nocuda-nopatch-git"
+            if ( ls -1A ./*.pkg.tar.zst &>/dev/null ) ;then
+                /usr/bin/rm ./*.pkg.tar.zst &>/dev/null
+            fi
+            makepkg --printsrcinfo >.SRCINFO
+            makepkg -Ccis --noconfirm
+            paru -S --rebuild --noconfirm mpv-pipewire
+            ;;
+        2)  for i in {ffmpeg-nocuda-nopatch-git,mpv-pipewire} ;do
+                if [[ ! -d "$HOME/dotfiles/apup/$i" ]] ;then
+                    return 99
+                fi
+            done
+            for i in {ffmpeg-nocuda-nopatch-git,mpv-pipewire} ;do
+                cd "$HOME/dotfiles/apup/$i"
+                if ( ls -1A ./*.pkg.tar.zst &>/dev/null ) ;then
+                    /usr/bin/rm ./*.pkg.tar.zst &>/dev/null
+                fi
+                makepkg --printsrcinfo >.SRCINFO
+                makepkg -Ccis --noconfirm
+            done
+            ;;
+    esac
+    cd "$DIR"
+    /usr/local/bin/fix-desktop-files -q
+    return 0
+}

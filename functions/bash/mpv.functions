@@ -1,0 +1,104 @@
+function mpww (){
+    local PL=/tmp/$(uuidgen).m3u
+    trap '\rm $PL' 0 1 2 3 15
+    xsel -bo |sed -e 's|^.*#||g' \
+                  -e "s|^.*\/home\/$USER|/home/$USER|g" \
+                  -e 's|".*$||g' \
+                  -e "s|'.*$||g" |tee "$PL"
+    mpv "$PL"
+}
+##########################
+function mpv-enhanced (){
+    if [[ "$1" = "-h" || "$1" = "--help"    ||
+          "$1" = "-u" || "$1" = "--update"  ||
+          "$1" = "-v" || "$1" = "--verbose" ]] ;then
+        movlocate "$1"
+        return 100
+    fi
+    local INPUT1="$(mktemp)"
+    local INPUT2="$(mktemp)"
+    local PL="/tmp/$(uuidgen).m3u"
+    local LIST="/tmp/$(uuidgen).txt"
+    local HEAD
+    local TAIL
+    case "$#" in
+        0)
+            echo "-bei \"$(xsel -bo |tr a-z A-Z)\"" >"$INPUT1"
+            ;;
+        1)
+            if [[ "$(echo "$1" |grep -c ^"-")" -eq 1 ]] ;then
+                echo "$1 \"$(xsel -bo |tr a-z A-Z)\"" >"$INPUT1"
+            else
+                echo " -bei \"$(echo "$1" |tr a-z A-Z)\"" >"$INPUT1"
+            fi
+            ;;
+        *)
+            echo $* >"$INPUT1"
+            ;;
+    esac
+    cat "$INPUT1" |
+    while read i ;do
+        if [[ "$(echo "$i" |grep -c ^"-")" -eq 1 ]] ;then
+            echo -n " $i "
+        else
+            if  [[ "$(echo "$i" |tr -d A-z |tr -d 0-9)" = "" ]] ;then
+                HEAD="$(echo "$i" |tr a-z A-Z|tr -d 0-9 )"
+                TAIL="$(echo "$i" |tr -d A-z)"
+                echo -n " \"${HEAD}-${TAIL}\" "
+            else
+                echo -n " \"$i\" "
+            fi
+        fi
+    done >"$INPUT2"
+    echo "" >>"$INPUT2"
+
+    read -n1 -p 'sort outputs by basename? [y/N] >' ANS
+    echo ""
+    case "$ANS" in
+        y|y)
+            eval "movlocate $(cat "$INPUT2")" |
+            while read i ;do
+                [[ -r "$i" ]] && [[ ! -h "$i" ]] && echo "$(basename "$i")v@_@v$i"
+            done |sort -u |sed '/^$/d' |sed -e 's|^.*v@_@v||g' >"$PL"
+            ;;
+        " "|n|N)
+            eval "movlocate $(cat "$INPUT2")" |
+            while read i ;do
+                [[ -r "$i" ]] && [[ ! -h "$i" ]] && echo "$i"
+            done |sort -Ru |sed '/^$/d' >"$PL"
+            ;;
+    esac
+    \rm "$INPUT1" "$INPUT2"
+    if [[ "$(cat "$PL" |grep -c "/")" -eq 0 ]] ;then
+        \rm "$PL" 2>/dev/null
+        yad --title='mpv enhanced' --text='\n404: Not Found.\n' --text-align=center \
+            --width=400 --timeout=2 --button='O K:0' --buttons-layout=center
+        return 99
+    fi
+    local N=1
+    local N_DIGITS
+    local ALL="$(cat "$PL" |wc -l)"
+    local ALL_DIGITS="$(echo -n "$ALL" |wc -m)"
+    local INDENT
+    cat "$PL" |while read i ;do
+        N_DIGITS="$(echo -n "$N" |wc -m)"
+        NO_INDENT=$((ALL_DIGITS-N_DIGITS))
+        if [[ "$NO_INDENT" -gt 0 ]] ;then
+            l=1
+            while [[ "$l" -le "${NO_INDENT}" ]] ;do
+                echo -n " "
+                let l++
+            done
+        fi
+        echo "$N/$ALL: $(basename "$i") :: $i"
+        let N++
+    done >"$LIST"
+
+    xdg-open "$LIST" &
+    sleep 1s
+    \rm "$LIST"
+    mpv "$PL"
+    \rm "$PL"
+}
+alias mpe='mpv-enhanced'
+

@@ -1,0 +1,22 @@
+function h2man (){
+    if [[ "$#" -eq 0 ]] || [[ "$1" = "-h" || "$1" = "--help" ]] ;then
+        cat << ____HELP
+        Usage: h2man [APP] [option to show help ex. -H,--help,--long-help... ]
+            other defaults: section of man = 1
+                                           locale = 'ja_JP.UTF-8'
+                                          Compless with gz
+____HELP
+    exit 100
+    fi
+    local APP="$(basename "$1")"
+    local HELPOPT="$2"   # '-H' / '-h' / '--help' / '-help' / '--help-full' ...
+    SECTION=1
+    local LOCALE='ja_JP.UTF-8'  #C
+    help2man --section="${SECTION}" \
+                          --locale="${LOCALE}" \
+                          "${APP}"  --help-option=${HELPOPT} \
+                         --output="${APP}.${SECTION}"
+    pigz -c ./"${APP}.${SECTION}" >./"${APP}.${SECTION}".gz ||
+    gz     -c ./"${APP}.${SECTION}" >./"${APP}.${SECTION}".gz
+}
+

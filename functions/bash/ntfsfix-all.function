@@ -1,0 +1,22 @@
+function ntfsfix-all (){
+    local i ;local ANS
+    lsblk -f |grep ntfs |
+    sed -e 's|\s.*$||g' -e 's|^.*sd|/dev/sd|g' |
+    while read -r i ;do
+        sudo umount "$i"
+        sudo ntfsfix -bd "$i"
+    done
+    while true ;do
+        echo "Mount all, or Reboot [ Mount / Reboot ]"
+        read -n1 -p '[ M / R ] >' ANS
+        echo ""
+        case "$ANS" in
+            M)  break                   ;;
+            R)  sudo systemctl reboot   ;;
+            *)  continue                ;;
+        esac
+    done
+    sudo mount -a
+    return 0
+}
+

@@ -1,0 +1,7 @@
+function pushd (){
+    pushd $* &>/dev/null
+    return 0
+}
+
+alias popd='popd &>/dev/null'
+

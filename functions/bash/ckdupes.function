@@ -1,0 +1,29 @@
+function ckdupes (){
+    if [[ "$#" -eq 1 ]] &&
+       [[ "$1" = "-h" || "$1" = "--help" ]] ;then
+        less "$0"
+        return 100
+    fi
+    {   if [[ "$#" -eq 1 ]] &&
+           [[ "$1" = "-l" || "$1" = "--lite"  || "$1" = "--light" ]] ;then
+            cat /tmp/movlocate/*.txt |grep -e .mp4$ |
+            sed     -e 's|^.*\/||g' -e 's|\..*$||g' |
+            grep    -e "-" |
+            grep -v -e "/twi" -e "/uraa" -e ^IMG |
+            grep -v -e ^0 -e ^1 -e ^2 -e ^3 -e ^4 \
+                    -e ^5 -e ^6 -e ^7 -e ^8 -e ^9 |
+            while read i ;do
+                [[ "$(echo "$i" |tr -d 0-9)" != "" ]] &&
+                echo "$i"
+            done #|sort |uniq -d
+        else
+            cat /tmp/movlocate/*.txt |grep -e .mp4$ |
+            sed -e 's|^.*\/||g' -e 's|\..*$||g' |
+            grep -v -e "/twi" -e "/uraa" -e ^IMG |
+            sort |uniq -d
+        fi
+    }  |sort -u |xsel -bi
+    echo "$(xsel -bo |wc -l) sets of dups found and clipped."
+    return 0
+}
+

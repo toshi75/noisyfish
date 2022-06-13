@@ -1,0 +1,91 @@
+function forgetmenot (){
+    local TT="$(mktemp)" ;trap 'rm $TT' 0 1 2 3 15
+    cat <<- '#___END' >"$TT"
+awk '!x[$0]++' |sed '/^$/d'
+
+/tmp/.userhidden
+
+{   sudo rmmod pcspkr &&
+    echo "blacklist pcspkr" >"/tmp/nobeep.conf" &&
+    sudo mv -f "/tmp/nobeep.conf" "/etc/modprobe.d/nobeep.conf"
+}   # END
+
+LANG=ja_JP.UTF-8
+
+#!/usr/bin/env bash
+cd "$(cd "$(dirname "$0")";pwd)"
+
+lsblk -f
+
+date '+%Y%m%d-%H%M%S'
+
+convert: imagemagick
+    Quarity MAX
+        jpg:  -quality 100
+        png:  -quality 05
+
+# sed: out.datの2行目取得
+# sed -n 行番号P 対象ファイル
+sed -n 2P out.dat
+
+# awk: out.datの2行目取得
+# awk 'NR==行番号' 対象ファイル
+awk 'NR==2' out.dat
+
+# bash: out.datの2行目取得
+# head -n 行番号 対象ファイル | tail -n 1
+head -n 2 out.data | tail -n 1
+
+
+CPU_CORES="$(getconf _NPROCESSORS_ONLN)"
+REAL_CPU_CORES="$(grep ^cpu\\scores /proc/cpuinfo |uniq |awk '{print $4}')"
+
+pkgver() {
+  cd "$pkgname"
+  ( set -o pipefail
+    git describe --long 2>/dev/null | sed 's/\([^-]*-g\)/r\1/;s/-/./g' ||
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+  )
+}
+
+#bash
+until [[ "$1" = "" ]] ;do
+    echo "$1"
+    shift
+done
+
+#fish
+for i in (seq (count $argv))
+    echo $argv[$i]
+end
+
+
+#bash
+for i in 192.168.10.{4..10} ;do
+    echo $i
+done
+#fish
+for i in 192.168.10.(seq 4 10)
+    echo $i
+end
+
+#bash
+for i in 192.168.10.{1..5} ;do
+    echo $i
+done
+
+#fish
+for i in 192.168.10.(seq 5)
+    echo $i
+end
+
+
+#___END
+
+    xdg-open "$TT"
+}
+alias fmn='forgetmenot'
+
+alias fmned='xdg-open $HOME/dotfiles/bash/functions.d/forgetmenot.function'
+alias edit-fmn='xdg-open $HOME/dotfiles/bash/functions.d/forgetmenot.function'
+

@@ -1,0 +1,28 @@
+function fontcp (){
+    if ( whitch doas &>/dev/null ) ;then
+        local SUDO='doas '
+    else
+        local SUDO='sudo '
+    fi
+    until [[ "$1" = "" ]] ;do
+        if   [[ "$(echo "$1" |grep -c .ttf$)" -gt 0 ]] ;then
+            $SUDO cp "$1" -t /usr/share/fonts/TTF
+        elif [[ "$(echo "$1" |grep -c .ttc$)" -gt 0 ]] ;then
+            $SUDO cp "$1" -t /usr/share/fonts/TTF
+        elif [[ "$(echo "$1" |grep -c .otf$)" -gt 0 ]] ;then
+            $SUDO cp "$1" -t /usr/share/fonts/OTF
+        else
+            echo "\"$(basename "$1")\", Font file ?"
+            read -n1 -p '[ y/N ] >'
+            echo ""
+            case "$REPLY" in
+                Y|y)    $SUDO cp "$1" -t /usr/share/fonts   ;;
+                N|n|"") continue    ;;
+            esac
+        fi
+        shift
+    done
+    fc-cache -r
+}
+alias fcp='fontcp '
+

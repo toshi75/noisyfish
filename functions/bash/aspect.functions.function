@@ -1,9 +1,40 @@
 function 16x9 (){
-    ffmpeg -hide_banner -i "$1" -c copy -aspect 16:9 "$2"
+    until [[ "$1" = "" ]] ;do
+        local EXT="$(
+            echo "$1" |sed -e 's|^.*\.||g'
+        )"
+        local ORIG="$(
+            echo "$1" |sed -e "s|\.\${EXT}$||g"
+        )"
+        mv "$1" "${ORIG}-ORIGASPECT.${EXT}"
+        ffmpeg -hide_banner -threads auto \
+               -i "${ORIG}-ORIGASPECT.${EXT}" -c copy \
+               -aspect 16:9 -movflags faststart "$1" ||
+        ffmpeg -hide_banner -threads auto -safe 0 -y \
+               -i "${ORIG}-ORIGASPECT.${EXT}" -c copy \
+               -aspect 16:9 -movflags faststart "$1"
+        shift
+    done
     return 0
 }
 
 function 4x3 (){
-    ffmpeg -hide_banner -i "$1" -c copy -aspect 4:3 "$2"
+    until [[ "$1" = "" ]] ;do
+        local EXT="$(
+            echo "$1" |sed -e 's|^.*\.||g'
+        )"
+        local ORIG="$(
+            echo "$1" |sed -e "s|\.\${EXT}$||g"
+        )"
+        mv "$1" "${ORIG}-ORIGASPECT.${EXT}"
+        ffmpeg -hide_banner -threads auto \
+               -i "${ORIG}-ORIGASPECT.${EXT}" -c copy \
+               -aspect 4:3 -movflags faststart "$1" ||
+        ffmpeg -hide_banner -threads auto -safe 0 -y \
+               -i "${ORIG}-ORIGASPECT.${EXT}" -c copy \
+               -aspect 4:3 -movflags faststart "$1"
+        shift
+    done
     return 0
 }
+

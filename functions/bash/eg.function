@@ -1,0 +1,55 @@
+function eg (){
+    function FUNC_eg (){
+        #https://openloadpro.com/av/******/
+        local TT="$(mktemp)"
+        local URL0="$(
+            curl -qkLSs "$1" |
+            tee -a "$TT" |
+            grep 'p,a,c,k,e,d' |
+            sed -e 's|\||\n|g' |
+            grep -B 1 embedgram |
+            head -n1 |
+            sed -e 's|^|https://embedgram.com/v/|g'
+        )"
+        local ID="$(
+            cat "$TT" |
+            grep '【品番】' |
+            sed -e 's|^.*【品番】||g' \
+                -e 's|\s.*$||g' |
+            tr a-z A-Z
+        )"
+        /usr/bin/rm "$TT"
+        #'https://embedgram.com/v/***********'
+        local URL="$(
+            curl -qkLSs "$URL0" |
+            tail -n1 |
+            sed -e 's|><|>\n<|g' |
+            grep mp4 |
+            head -n1 |
+            sed -e 's|<source\ssrc=|https:|g' \
+                -e 's|\stype=video.*$||g'
+        )"
+        axel -o "${ID}".mp4 "$URL"
+        return 0
+    }
+
+    export -f FUNC_eg
+
+    local LIST="$(mktemp)"
+    trap '/usr/bin/rm $LIST' 0 1 2 3 15
+    case "$#" in
+        0)  xsel -bo |awk 4 |
+            while read i ;do
+                echo "$i"
+            done |awk '!x[$0]++' |sed '/^$/d' >"$LIST"
+            ;;
+        *)  until [[ "$1" = "" ]] ;do
+                echo "$1"
+                shift
+            done |awk '!x[$0]++' |sed '/^$/d' >"$LIST"
+            ;;
+    esac
+    cat "$LIST" |awk 4 |
+    xargs -P2 -I{} bash -c 'FUNC_eg {}'
+    return 0
+}

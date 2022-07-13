@@ -1,4 +1,4 @@
-function pgp (){
+function gp (){
     if ( ! which paru &>/dev/null ) ;then
         echo "/usr/bin/paru not found."
         return 99
@@ -12,18 +12,17 @@ function pgp (){
                     paru -Gp "$i"
                     echo "=================="
                     echo
-                done >"$TT" ;;
+                done >>"$TT" ;;
             *)  until [[ "$1" = "" ]] ;do
                     paru -Gp "$1"
                     echo "=================="
                     echo
                     shift
-                done >"$TT" ;;
+                done >>"$TT" ;;
         esac
         "$PAGER" "$TT"
     fi
     return 0
 }
 
-alias ygp='pgp'
 

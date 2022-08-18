@@ -1,8 +1,0 @@
-function calc (){
-    if ( ! type bc &>/dev/null ) ;then
-        doas pacman -S --needed --noconfirm bc
-    fi
-    echo "$*" |/usr/bin/bc -q
-    return 0
-}
-

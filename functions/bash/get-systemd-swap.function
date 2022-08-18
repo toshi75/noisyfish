@@ -1,8 +1,0 @@
-function get-systemd-swap (){
-    paru -S --needed --noconfirm systemd-swap
-    doas sed -e 's|^#swapf|swapf|g' \
-             -e 's|swapfc_enabled=0|swapfc_enabled=1|g' \
-             -i /etc/systemd/swap.conf
-    doas systemctl enable --now systemd-swap.service
-    return 0
-}

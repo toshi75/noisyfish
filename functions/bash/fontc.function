@@ -1,8 +1,0 @@
-function fontc (){
-    echo -n "Updating font cache... "
-    fc-cache -r     >/dev/null
-    doas mkfontscale /usr/share/fonts/TTF
-    doas mkfontdir   /usr/share/fonts/TTF
-    echo "done."
-}
-

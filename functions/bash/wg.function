@@ -1,7 +1,0 @@
-function wg (){
-    case "$#" in
-        0) wget "$(xsel -bo)" ;;
-        *) wget $*            ;;
-    esac
-}
-

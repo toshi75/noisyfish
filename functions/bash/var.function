@@ -1,8 +1,0 @@
-function var (){
-    if [[ ! -d '/var/var-usr-temp' ]] ;then
-        source "/usr/share/start.up"
-        mkdir -p "/tmp/var-usr-temp"
-        mv "/tmp/var-usr-temp" "/var"
-    fi
-    cd '/var/var-usr-temp'
-}

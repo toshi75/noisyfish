@@ -1,9 +1,0 @@
-function xsel (){
-    if [[ "$1" = "-bi" || "$1" = "-ib" ]] ;then
-        xsel -bi && xsel -bo |xsel -pi
-    else
-        xsel $*
-    fi
-    return 0
-}
-

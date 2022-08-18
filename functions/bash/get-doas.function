@@ -1,8 +1,0 @@
-get-doas (){
-    sudo pacman -S --needed --noconfirm opendoas
-    echo "permit nopass keepenv $USER" >/tmp/doas.conf
-    sudo mv -f /tmp/doas.conf -t /etc
-    sudo chown root:root /etc/doas.conf
-    sudo chmod 600       /etc/doas.conf
-    return 0
-}

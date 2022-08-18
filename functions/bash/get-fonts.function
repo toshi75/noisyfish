@@ -1,8 +1,0 @@
-function get-fonts (){
-    paru -S --needed --noconfirm \
-        fontforge perl-rename python-fonttools \
-        ttf-migu ttf-delugia-code noto-fonts-emoji \
-        ttf-twemoji afdko
-    return 0
-}
-

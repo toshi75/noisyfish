@@ -1,5 +1,0 @@
-function chownn (){
-    doas chown ${USER}
-    return 0
-}
-

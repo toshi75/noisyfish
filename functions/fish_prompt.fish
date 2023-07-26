@@ -82,51 +82,57 @@ function fish_prompt --description 'prompt'
                                              -e 's|\/$||g')
     end
   # Line 3
-    set_color ffff00 ;echo -n '>'
-    set_color ff0000 ;echo -n '+'
-    set_color 00ffff ;switch (math (random)%6)
-                          case 0 1 2
-                              echo -n 'XX'
-                          case 3 4
-                              echo -n '+X'
-                          case 5
-                              echo -n '++'
-                      end
-    set_color 00ff00 ;echo -n '('
-    if [ (date '+%H') -ge 22 ] || [ (date '+%H') -le 6 ]
-        set_color ffffff ;switch (math (random)%6)
-                              case 0
-                                  echo -n '*'
-                              case 1 2
-                                  echo -n '"'
-                              case '*'
-                                  echo -n '^'
-                          end
-    else
-        set_color ff0000 ;switch (math (random)%35)
-                              case 0
-                                  echo -n 'ϕ'
-                              case 1 2
-                                  echo -n '٭'
-                              case 3 4 5
-                                  echo -n '^'
-                              case 6 7 8 9
-                                  echo -n '*'
-                              case 10 11 12 13 14
-                                  echo -n '"'
-                              case 15 16 17 18 19 20
-                                  echo -n '0'
-                              case 21 22 23 24 25 26 27
-                                  echo -n 'O'
-                              case '*'
-                                  echo -n '@'
-                          end
+    set -l ARROW NOTfish
+    switch ARROW
+        case fish
+            set_color ffff00 ;echo -n '>'
+            set_color ff0000 ;echo -n '+'
+            set_color 00ffff ;switch (math (random)%6)
+                                  case 0 1 2
+                                      echo -n 'XX'
+                                  case 3 4
+                                      echo -n '+X'
+                                  case 5
+                                      echo -n '++'
+                              end
+            set_color 00ff00 ;echo -n '('
+            if [ (date '+%H') -ge 22 ] || [ (date '+%H') -le 6 ]
+                set_color ffffff ;switch (math (random)%6)
+                                      case 0
+                                          echo -n '*'
+                                      case 1 2
+                                          echo -n '"'
+                                      case '*'
+                                          echo -n '^'
+                                  end
+            else
+                set_color ff0000 ;switch (math (random)%35)
+                                      case 0
+                                          echo -n 'ϕ'
+                                      case 1 2
+                                          echo -n '٭'
+                                      case 3 4 5
+                                          echo -n '^'
+                                      case 6 7 8 9
+                                          echo -n '*'
+                                      case 10 11 12 13 14
+                                          echo -n '"'
+                                      case 15 16 17 18 19 20
+                                          echo -n '0'
+                                      case 21 22 23 24 25 26 27
+                                          echo -n 'O'
+                                      case '*'
+                                          echo -n '@'
+                                  end
+            end
+            set_color ffff00 ;switch (math (random)%3)
+                                  case 0 1
+                                      echo -n '>|'
+                                  case 2
+                                      echo -n '=|'
+                              end
+        case '*'
+            echo -n '↳|'
     end
-    set_color ffff00 ;switch (math (random)%3)
-                          case 0 1
-                              echo -n '>|'
-                          case 2
-                              echo -n '=|'
-                      end
     set_color normal
 end

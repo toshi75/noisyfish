@@ -18,7 +18,7 @@ function fish_prompt --description prompt
         echo -n $TAIL
         set N (math $N+1)
     end
-    printf '\s'
+    printf '\n'
     # Line 2
     set -l USE NotMYLOCALE # MYLOCALE or not.
     set_color ff0000
